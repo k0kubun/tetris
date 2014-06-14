@@ -84,3 +84,7 @@ func pushMino() {
 func (m *Mino) block() string {
 	return blocks[m.blockType]
 }
+
+func (m *Mino) applyGravity() {
+	m.y++
+}
