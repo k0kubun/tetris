@@ -6,6 +6,20 @@ import (
 
 var clock *Clock
 
+func initMino() {
+	pushMino()
+	pushMino()
+}
+
+func pushMino() {
+	currentMino = nextMino
+	if currentMino != nil {
+		currentMino.x = defaultMinoX
+		currentMino.y = defaultMinoY
+	}
+	nextMino = NewMino()
+}
+
 func main() {
 	err := termbox.Init()
 	if err != nil {

@@ -28,8 +28,8 @@ const (
     WkkkkkkkkkkW
     WWWWWWWWWWWW
 	`
-	currentMinoXOffset, currentMinoYOffset = 2, 1
-	nextMinoXOffset, nextMinoYOffset       = 15, 1
+	currentMinoXOffset, currentMinoYOffset = 5, 2
+	nextMinoXOffset, nextMinoYOffset       = 18, 1
 )
 
 var (
@@ -72,7 +72,7 @@ func drawNextMino() {
 }
 
 func drawMino(mino *Mino, xOffset, yOffset int) {
-	lines := strings.Split(mino.block(), "\n")
+	lines := strings.Split(mino.block, "\n")
 
 	for y, line := range lines {
 		for x, char := range line {
