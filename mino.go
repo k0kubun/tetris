@@ -85,6 +85,14 @@ func (m *Mino) moveDown() {
 	m.y++
 }
 
+func (m *Mino) moveLeft() {
+	m.x--
+}
+
+func (m *Mino) moveRight() {
+	m.x++
+}
+
 func (m *Mino) applyGravity() {
 	m.moveDown()
 }

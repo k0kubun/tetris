@@ -26,9 +26,9 @@ func waitKeyInput() {
 			} else if ev.Key == termbox.KeyArrowDown {
 				currentMino.moveDown()
 			} else if ev.Key == termbox.KeyArrowLeft {
-				// Left move
+				currentMino.moveLeft()
 			} else if ev.Key == termbox.KeyArrowRight {
-				// Right move
+				currentMino.moveRight()
 			}
 		}
 		refreshScreen()
