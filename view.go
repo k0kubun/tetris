@@ -77,8 +77,10 @@ func drawMino(mino *Mino, xOffset, yOffset int) {
 
 	for y, line := range lines {
 		for x, char := range line {
-			color := colorByChar(char)
-			drawCell(x+mino.x+xOffset, y+mino.y+yOffset, color)
+			if isOnBoard(x+mino.x, y+mino.y) {
+				color := colorByChar(char)
+				drawCell(x+mino.x+xOffset, y+mino.y+yOffset, color)
+			}
 		}
 	}
 }

@@ -14,13 +14,16 @@ func NewCell(x, y int, ch rune) *Cell {
 }
 
 func (c *Cell) conflicts() bool {
-	return !c.isOnBoard() || c.isOverlapped()
+	return c.isOnWall() || c.isOverlapped()
 }
 
 func (c *Cell) isOverlapped() bool {
+	if !isOnBoard(c.x, c.y) {
+		return false
+	}
 	return board.colors[c.x][c.y] != blankColor
 }
 
-func (c *Cell) isOnBoard() bool {
-	return (0 <= c.x && c.x < boardWidth) && (0 <= c.y && c.y < boardHeight)
+func (c *Cell) isOnWall() bool {
+	return c.x < 0 || boardWidth <= c.x || boardHeight <= c.y
 }

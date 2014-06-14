@@ -49,3 +49,7 @@ func (b *Board) setCells(cells []*Cell) {
 		b.setCell(cell)
 	}
 }
+
+func isOnBoard(x, y int) bool {
+	return (0 <= x && x < boardWidth) && (0 <= y && y < boardHeight)
+}
