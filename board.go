@@ -5,12 +5,12 @@ import (
 )
 
 const (
-	BOARD_WIDTH  = 10
-	BOARD_HEIGHT = 18
+	boardWidth  = 10
+	boardHeight = 18
 )
 
 var (
-	board = [BOARD_HEIGHT][BOARD_WIDTH]Cell{}
+	board = [boardWidth][boardHeight]Cell{}
 )
 
 type Cell struct {

@@ -8,6 +8,7 @@ import (
 
 const (
 	defaultMinoX, defaultMinoY = 3, -1
+	minoWidth, minoHeight      = 4, 4
 )
 
 var (
@@ -72,12 +73,12 @@ func NewMino() *Mino {
 }
 
 func (m *Mino) cell(x, y int) rune {
-	return rune(m.block[x+5*y])
+	return rune(m.block[x+(minoWidth+1)*y])
 }
 
 func (m *Mino) setCell(x, y int, cell rune) {
 	buf := []rune(m.block)
-	buf[x+5*y] = cell
+	buf[x+(minoWidth+1)*y] = cell
 	m.block = string(buf)
 }
 
@@ -86,11 +87,19 @@ func (m *Mino) moveDown() {
 }
 
 func (m *Mino) moveLeft() {
-	m.x--
+	dstMino := *m
+	dstMino.x--
+	if dstMino.isOnBoard() {
+		m.x--
+	}
 }
 
 func (m *Mino) moveRight() {
-	m.x++
+	dstMino := *m
+	dstMino.x++
+	if dstMino.isOnBoard() {
+		m.x++
+	}
 }
 
 func (m *Mino) applyGravity() {
@@ -100,9 +109,9 @@ func (m *Mino) applyGravity() {
 func (m *Mino) rotateRight() {
 	oldMino := *m
 
-	for j := 0; j < 4; j++ {
-		for i := 0; i < 4; i++ {
-			m.setCell(3-j, i, oldMino.cell(i, j))
+	for j := 0; j < minoHeight; j++ {
+		for i := 0; i < minoWidth; i++ {
+			m.setCell(minoHeight-j-1, i, oldMino.cell(i, j))
 		}
 	}
 }
@@ -110,9 +119,31 @@ func (m *Mino) rotateRight() {
 func (m *Mino) rotateLeft() {
 	oldMino := *m
 
-	for j := 0; j < 4; j++ {
-		for i := 0; i < 4; i++ {
-			m.setCell(j, 3-i, oldMino.cell(i, j))
+	for j := 0; j < minoHeight; j++ {
+		for i := 0; i < minoWidth; i++ {
+			m.setCell(j, minoWidth-i-1, oldMino.cell(i, j))
 		}
 	}
+}
+
+func (m *Mino) isOnBoard() bool {
+	for _, position := range m.positions() {
+		position.isOnBoard()
+		if !position.isOnBoard() {
+			return false
+		}
+	}
+	return true
+}
+
+func (m *Mino) positions() []*Position {
+	positions := []*Position{}
+	for i := 0; i < minoWidth; i++ {
+		for j := 0; j < minoHeight; j++ {
+			if m.cell(i, j) != '.' {
+				positions = append(positions, NewPosition(m.x+i, m.y+j))
+			}
+		}
+	}
+	return positions
 }
