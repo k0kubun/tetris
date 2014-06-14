@@ -82,11 +82,18 @@ func (m *Mino) setCell(x, y int, cell rune) {
 	m.block = string(buf)
 }
 
+func (m *Mino) applyGravity() {
+	m.moveDown()
+}
+
 func (m *Mino) moveDown() {
 	dstMino := *m
 	dstMino.y++
 	if dstMino.isOnBoard() {
 		m.y++
+	} else {
+		board.setCells(m.cells())
+		pushMino()
 	}
 }
 
@@ -104,10 +111,6 @@ func (m *Mino) moveRight() {
 	if dstMino.isOnBoard() {
 		m.x++
 	}
-}
-
-func (m *Mino) applyGravity() {
-	m.moveDown()
 }
 
 func (m *Mino) rotateRight() {
