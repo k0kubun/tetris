@@ -19,8 +19,7 @@ func initMino() {
 func pushMino() {
 	currentMino = nextMino
 	if currentMino != nil {
-		currentMino.x = defaultMinoX
-		currentMino.y = defaultMinoY
+		currentMino.x, currentMino.y = defaultMinoX, defaultMinoY
 		if currentMino.conflicts() {
 			gameOver()
 			return
