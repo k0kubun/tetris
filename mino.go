@@ -114,8 +114,15 @@ func (m *Mino) moveRight() {
 }
 
 func (m *Mino) rotateRight() {
-	oldMino := *m
+	dstMino := *m
+	dstMino.forceRotateRight()
+	if dstMino.isOnBoard() {
+		m.forceRotateRight()
+	}
+}
 
+func (m *Mino) forceRotateRight() {
+	oldMino := *m
 	for j := 0; j < minoHeight; j++ {
 		for i := 0; i < minoWidth; i++ {
 			m.setCell(minoHeight-j-1, i, oldMino.cell(i, j))
@@ -124,8 +131,15 @@ func (m *Mino) rotateRight() {
 }
 
 func (m *Mino) rotateLeft() {
-	oldMino := *m
+	dstMino := *m
+	dstMino.forceRotateLeft()
+	if dstMino.isOnBoard() {
+		m.forceRotateLeft()
+	}
+}
 
+func (m *Mino) forceRotateLeft() {
+	oldMino := *m
 	for j := 0; j < minoHeight; j++ {
 		for i := 0; i < minoWidth; i++ {
 			m.setCell(j, minoWidth-i-1, oldMino.cell(i, j))
