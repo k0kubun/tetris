@@ -32,22 +32,24 @@ const (
 
 func refreshScreen() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	drawByText(background)
+
+	drawByText(background, 0, 0)
+
 	termbox.Flush()
 }
 
-func drawByText(text string) {
+func drawByText(text string, left, top int) {
 	lines := strings.Split(text, "\n")
 
 	for y, line := range lines {
 		for x, char := range line {
 			switch char {
 			case 'w':
-				termbox.SetCell(2*x-1, y, ' ', termbox.ColorDefault, termbox.ColorWhite|termbox.AttrBold)
-				termbox.SetCell(2*x, y, ' ', termbox.ColorDefault, termbox.ColorWhite|termbox.AttrBold)
+				termbox.SetCell(2*left+2*x-1, top+y, ' ', termbox.ColorDefault, termbox.ColorWhite|termbox.AttrBold)
+				termbox.SetCell(2*left+2*x, top+y, ' ', termbox.ColorDefault, termbox.ColorWhite|termbox.AttrBold)
 			case '.':
-				termbox.SetCell(2*x-1, y, ' ', termbox.ColorDefault, termbox.ColorBlack)
-				termbox.SetCell(2*x, y, ' ', termbox.ColorDefault, termbox.ColorBlack)
+				termbox.SetCell(2*left+2*x-1, top+y, ' ', termbox.ColorDefault, termbox.ColorBlack)
+				termbox.SetCell(2*left+2*x, top+y, ' ', termbox.ColorDefault, termbox.ColorBlack)
 			}
 		}
 	}
