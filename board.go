@@ -11,10 +11,6 @@ const (
 	blankColor  = termbox.ColorBlack
 )
 
-var (
-	board = NewBoard()
-)
-
 type Board struct {
 	colors [boardWidth][boardHeight]termbox.Attribute
 }
@@ -27,6 +23,50 @@ func NewBoard() *Board {
 		}
 	}
 	return board
+}
+
+func (b *Board) deleteLine(y int) {
+	for i := 0; i < boardWidth; i++ {
+		b.colors[i][y] = blankColor
+	}
+	for j := y; j > 0; j-- {
+		for i := 0; i < boardWidth; i++ {
+			b.colors[i][j] = b.colors[i][j-1]
+		}
+	}
+	for i := 0; i < boardWidth; i++ {
+		b.colors[i][0] = blankColor
+	}
+}
+
+func (b *Board) fullLines() []int {
+	fullLines := []int{}
+	for j := 0; j < boardHeight; j++ {
+		if b.isFullLine(j) {
+			fullLines = append(fullLines, j)
+		}
+	}
+	return fullLines
+}
+
+func (b *Board) isFullLine(y int) bool {
+	hasBlank := false
+	for i := 0; i < boardWidth; i++ {
+		if b.colors[i][y] == blankColor {
+			hasBlank = true
+			break
+		}
+	}
+	return !hasBlank
+}
+
+func (b *Board) hasFullLine() bool {
+	for j := 0; j < boardHeight; j++ {
+		if b.isFullLine(j) {
+			return true
+		}
+	}
+	return false
 }
 
 func (b *Board) text() string {

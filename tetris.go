@@ -5,6 +5,7 @@ import (
 )
 
 var (
+	board       *Board
 	clock       *Clock
 	currentMino *Mino
 	nextMino    *Mino
@@ -17,6 +18,17 @@ func initMino() {
 }
 
 func pushMino() {
+	if board.hasFullLine() {
+		clock.pause()
+
+		lines := board.fullLines()
+		for _, line := range lines {
+			board.deleteLine(line)
+		}
+
+		clock.start()
+	}
+
 	currentMino = nextMino
 	if currentMino != nil {
 		currentMino.x, currentMino.y = defaultMinoX, defaultMinoY
@@ -43,6 +55,7 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 	termbox.Flush()
 
+	board = NewBoard()
 	initMino()
 	refreshScreen()
 	clock = NewClock(func() {
