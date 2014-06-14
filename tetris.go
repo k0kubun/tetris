@@ -14,6 +14,7 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 	termbox.Flush()
 
+	initMino()
 	refreshScreen()
 	waitKeyInput()
 }
