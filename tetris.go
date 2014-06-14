@@ -9,7 +9,19 @@ var (
 	clock       *Clock
 	currentMino *Mino
 	nextMino    *Mino
+	score       int
+	level       int
+	deleteLines int
 )
+
+func initGame() {
+	board = NewBoard()
+	initMino()
+	score = 0
+	level = 1
+	deleteLines = 0
+	refreshScreen()
+}
 
 func initMino() {
 	currentMino, nextMino = nil, nil
@@ -42,8 +54,7 @@ func pushMino() {
 }
 
 func gameOver() {
-	board = NewBoard()
-	initMino()
+	initGame()
 }
 
 func main() {
@@ -56,9 +67,7 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 	termbox.Flush()
 
-	board = NewBoard()
-	initMino()
-	refreshScreen()
+	initGame()
 	clock = NewClock(func() {
 		currentMino.applyGravity()
 		refreshScreen()
