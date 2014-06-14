@@ -17,18 +17,20 @@ func waitKeyInput() {
 				} else {
 					clock.pause()
 				}
-			} else if ev.Ch == 'z' {
-				currentMino.rotateLeft()
-			} else if ev.Ch == 'x' || ev.Key == termbox.KeyArrowUp {
-				currentMino.rotateRight()
-			} else if ev.Key == termbox.KeySpace {
-				// Drop
-			} else if ev.Key == termbox.KeyArrowDown {
-				currentMino.moveDown()
-			} else if ev.Key == termbox.KeyArrowLeft {
-				currentMino.moveLeft()
-			} else if ev.Key == termbox.KeyArrowRight {
-				currentMino.moveRight()
+			} else if !clock.paused {
+				if ev.Ch == 'z' {
+					currentMino.rotateLeft()
+				} else if ev.Ch == 'x' || ev.Key == termbox.KeyArrowUp {
+					currentMino.rotateRight()
+				} else if ev.Key == termbox.KeySpace {
+					// Drop
+				} else if ev.Key == termbox.KeyArrowDown {
+					currentMino.moveDown()
+				} else if ev.Key == termbox.KeyArrowLeft {
+					currentMino.moveLeft()
+				} else if ev.Key == termbox.KeyArrowRight {
+					currentMino.moveRight()
+				}
 			}
 		}
 		refreshScreen()
