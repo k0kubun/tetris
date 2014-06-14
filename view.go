@@ -58,6 +58,7 @@ func refreshScreen() {
 
 	drawBacks(background, 0, 0)
 	drawCells(board.text(), boardXOffset, boardYOffset)
+	drawDropMarker()
 	drawCurrentMino()
 	drawNextMino()
 
@@ -66,6 +67,21 @@ func refreshScreen() {
 
 func drawCurrentMino() {
 	drawMino(currentMino, boardXOffset, boardYOffset)
+}
+
+func drawDropMarker() {
+	marker := *currentMino
+	marker.putBottom()
+
+	lines := strings.Split(marker.block, "\n")
+	for y, line := range lines {
+		for x, char := range line {
+			if isOnBoard(x+marker.x, y+marker.y) && colorByChar(char) != blankColor &&
+				colorByChar(char) != termbox.ColorDefault {
+				drawCell(x+marker.x+boardXOffset, y+marker.y+boardYOffset, colorByChar('K'))
+			}
+		}
+	}
 }
 
 func drawNextMino() {
