@@ -60,13 +60,5 @@ func main() {
 	termbox.Flush()
 
 	drawByText(background)
-
-	for {
-		switch ev := termbox.PollEvent(); ev.Type {
-		case termbox.EventKey:
-			if ev.Ch == 'q' || ev.Key == termbox.KeyCtrlC || ev.Key == termbox.KeyCtrlD {
-				return
-			}
-		}
-	}
+	waitKeyInput()
 }
