@@ -29,7 +29,7 @@ const (
     WWWWWWWWWWWW
 	`
 	currentMinoXOffset, currentMinoYOffset = 5, 2
-	nextMinoXOffset, nextMinoYOffset       = 18, 1
+	nextMinoXOffset, nextMinoYOffset       = 18, 2
 )
 
 var (
