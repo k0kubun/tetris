@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/nsf/termbox-go"
 )
 
@@ -15,15 +16,36 @@ var (
 )
 
 type Board struct {
-	cells [boardWidth][boardHeight]termbox.Attribute
+	colors [boardWidth][boardHeight]termbox.Attribute
 }
 
 func NewBoard() *Board {
 	board := &Board{}
 	for i := 0; i < boardWidth; i++ {
 		for j := 0; j < boardHeight; j++ {
-			board.cells[i][j] = blankColor
+			board.colors[i][j] = blankColor
 		}
 	}
 	return board
+}
+
+func (b *Board) text() string {
+	text := ""
+	for j := 0; j < boardHeight; j++ {
+		for i := 0; i < boardWidth; i++ {
+			text = fmt.Sprintf("%s%c", text, charByColor(b.colors[i][j]))
+		}
+		text = fmt.Sprintf("%s\n", text)
+	}
+	return text
+}
+
+func (b *Board) setCell(cell *Cell) {
+	b.colors[cell.x][cell.y] = cell.color
+}
+
+func (b *Board) setCells(cells []*Cell) {
+	for _, cell := range cells {
+		b.setCell(cell)
+	}
 }

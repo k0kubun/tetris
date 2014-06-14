@@ -145,7 +145,7 @@ func (m *Mino) cells() []*Cell {
 	for i := 0; i < minoWidth; i++ {
 		for j := 0; j < minoHeight; j++ {
 			if m.cell(i, j) != '.' {
-				cells = append(cells, NewCell(m.x+i, m.y+j))
+				cells = append(cells, NewCell(m.x+i, m.y+j, m.cell(i, j)))
 			}
 		}
 	}

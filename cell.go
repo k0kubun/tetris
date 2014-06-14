@@ -1,11 +1,16 @@
 package main
 
+import (
+	"github.com/nsf/termbox-go"
+)
+
 type Cell struct {
-	x, y int
+	x, y  int
+	color termbox.Attribute
 }
 
-func NewCell(x, y int) *Cell {
-	return &Cell{x: x, y: y}
+func NewCell(x, y int, ch rune) *Cell {
+	return &Cell{x: x, y: y, color: colorMapping[ch]}
 }
 
 func (c *Cell) isOnBoard() bool {
