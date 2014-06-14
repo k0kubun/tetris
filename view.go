@@ -54,13 +54,19 @@ var (
 )
 
 func refreshScreen() {
+	rewriteScreen(func() {
+		drawDropMarker()
+		drawCurrentMino()
+	})
+}
+
+func rewriteScreen(rewrite func()) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
 	drawBacks(background, 0, 0)
 	drawCells(board.text(), boardXOffset, boardYOffset)
-	drawDropMarker()
-	drawCurrentMino()
 	drawNextMino()
+	rewrite()
 
 	termbox.Flush()
 }

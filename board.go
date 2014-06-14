@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/nsf/termbox-go"
+	"time"
 )
 
 const (
-	boardWidth  = 10
-	boardHeight = 18
-	blankColor  = termbox.ColorBlack
+	boardWidth        = 10
+	boardHeight       = 18
+	blankColor        = termbox.ColorBlack
+	animationDuration = 160
 )
 
 type Board struct {
@@ -47,6 +49,28 @@ func (b *Board) fullLines() []int {
 		}
 	}
 	return fullLines
+}
+
+func (b *Board) showDeleteAnimation(lines []int) {
+	for times := 0; times < 3; times++ {
+		rewriteScreen(func() {
+			for _, line := range lines {
+				b.colorizeLine(line, termbox.ColorCyan)
+			}
+		})
+		timer := time.NewTimer(animationDuration * time.Millisecond)
+		<-timer.C
+
+		rewriteScreen(func() {})
+		timer = time.NewTimer(animationDuration * time.Millisecond)
+		<-timer.C
+	}
+}
+
+func (b *Board) colorizeLine(line int, color termbox.Attribute) {
+	for i := 0; i < boardWidth; i++ {
+		drawBack(i+boardXOffset, line+boardYOffset, color)
+	}
 }
 
 func (b *Board) isFullLine(y int) bool {

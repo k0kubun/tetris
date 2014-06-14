@@ -22,6 +22,7 @@ func pushMino() {
 		clock.pause()
 
 		lines := board.fullLines()
+		board.showDeleteAnimation(lines)
 		for _, line := range lines {
 			board.deleteLine(line)
 		}
