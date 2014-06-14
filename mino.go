@@ -52,11 +52,6 @@ var (
 	}
 )
 
-var (
-	currentMino *Mino
-	nextMino    *Mino
-)
-
 type Mino struct {
 	block string
 	x     int

@@ -4,9 +4,14 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
-var clock *Clock
+var (
+	clock       *Clock
+	currentMino *Mino
+	nextMino    *Mino
+)
 
 func initMino() {
+	currentMino, nextMino = nil, nil
 	pushMino()
 	pushMino()
 }
@@ -16,8 +21,17 @@ func pushMino() {
 	if currentMino != nil {
 		currentMino.x = defaultMinoX
 		currentMino.y = defaultMinoY
+		if currentMino.conflicts() {
+			gameOver()
+			return
+		}
 	}
 	nextMino = NewMino()
+}
+
+func gameOver() {
+	board = NewBoard()
+	initMino()
 }
 
 func main() {
