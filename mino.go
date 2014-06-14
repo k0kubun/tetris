@@ -83,7 +83,11 @@ func (m *Mino) setCell(x, y int, cell rune) {
 }
 
 func (m *Mino) moveDown() {
-	m.y++
+	dstMino := *m
+	dstMino.y++
+	if dstMino.isOnBoard() {
+		m.y++
+	}
 }
 
 func (m *Mino) moveLeft() {

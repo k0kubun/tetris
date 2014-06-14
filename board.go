@@ -7,12 +7,23 @@ import (
 const (
 	boardWidth  = 10
 	boardHeight = 18
+	blankColor  = 'k'
 )
 
 var (
-	board = [boardWidth][boardHeight]Cell{}
+	board = NewBoard()
 )
 
-type Cell struct {
-	color termbox.Attribute
+type Board struct {
+	cells [boardWidth][boardHeight]termbox.Attribute
+}
+
+func NewBoard() *Board {
+	board := &Board{}
+	for i := 0; i < boardWidth; i++ {
+		for j := 0; j < boardHeight; j++ {
+			board.cells[i][j] = blankColor
+		}
+	}
+	return board
 }
