@@ -131,23 +131,23 @@ func (m *Mino) rotateLeft() {
 }
 
 func (m *Mino) isOnBoard() bool {
-	for _, position := range m.positions() {
-		position.isOnBoard()
-		if !position.isOnBoard() {
+	for _, cell := range m.cells() {
+		cell.isOnBoard()
+		if !cell.isOnBoard() {
 			return false
 		}
 	}
 	return true
 }
 
-func (m *Mino) positions() []*Position {
-	positions := []*Position{}
+func (m *Mino) cells() []*Cell {
+	cells := []*Cell{}
 	for i := 0; i < minoWidth; i++ {
 		for j := 0; j < minoHeight; j++ {
 			if m.cell(i, j) != '.' {
-				positions = append(positions, NewPosition(m.x+i, m.y+j))
+				cells = append(cells, NewCell(m.x+i, m.y+j))
 			}
 		}
 	}
-	return positions
+	return cells
 }
