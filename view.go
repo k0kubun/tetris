@@ -7,29 +7,29 @@ import (
 
 const (
 	background = `
-    WWWWWWWWWWWW WWWWWW
-    WkkkkkkkkkkW WkkkkW
-    WkkkkkkkkkkW WkkkkW
-    WkkkkkkkkkkW WkkkkW
-    WkkkkkkkkkkW WkkkkW
-    WkkkkkkkkkkW WWWWWW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WkkkkkkkkkkW
-    WWWWWWWWWWWW
+		WWWWWWWWWWWW WWWWWW
+		WkkkkkkkkkkW WkkkkW
+		WkkkkkkkkkkW WkkkkW
+		WkkkkkkkkkkW WkkkkW
+		WkkkkkkkkkkW WkkkkW
+		WkkkkkkkkkkW WWWWWW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WkkkkkkkkkkW
+		WWWWWWWWWWWW
 	`
-	boardXOffset, boardYOffset       = 5, 2
-	nextMinoXOffset, nextMinoYOffset = 18, 2
+	boardXOffset, boardYOffset       = 3, 2
+	nextMinoXOffset, nextMinoYOffset = 16, 2
 )
 
 var (
