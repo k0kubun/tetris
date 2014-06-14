@@ -4,6 +4,10 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
+const (
+	levelMax = 20
+)
+
 var (
 	board       *Board
 	clock       *Clock
@@ -29,18 +33,37 @@ func initMino() {
 	pushMino()
 }
 
-func pushMino() {
-	if board.hasFullLine() {
-		clock.pause()
-
-		lines := board.fullLines()
-		board.showDeleteAnimation(lines)
-		for _, line := range lines {
-			board.deleteLine(line)
-		}
-
-		clock.start()
+func deleteCheck() {
+	if !board.hasFullLine() {
+		return
 	}
+	clock.pause()
+
+	lines := board.fullLines()
+	board.showDeleteAnimation(lines)
+	for _, line := range lines {
+		board.deleteLine(line)
+	}
+	deleteLines += len(lines)
+	levelUpdate()
+
+	clock.start()
+}
+
+func levelUpdate() {
+	if level == levelMax {
+		return
+	}
+
+	targetLevel := deleteLines / 10
+	if level < targetLevel {
+		level = targetLevel
+		clock.updateInterval()
+	}
+}
+
+func pushMino() {
+	deleteCheck()
 
 	currentMino = nextMino
 	if currentMino != nil {

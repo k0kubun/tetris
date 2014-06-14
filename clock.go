@@ -4,10 +4,6 @@ import (
 	"time"
 )
 
-var (
-	interval = 500 * time.Millisecond
-)
-
 type Clock struct {
 	ticker   *time.Ticker
 	callback func()
@@ -29,7 +25,7 @@ func (c *Clock) start() {
 	c.stop = make(chan bool)
 
 	go func(c *Clock) {
-		c.ticker = time.NewTicker(interval)
+		c.ticker = time.NewTicker(time.Duration(10*(50-2*level)) * time.Millisecond)
 		for {
 			select {
 			case <-c.ticker.C:
@@ -40,6 +36,11 @@ func (c *Clock) start() {
 		}
 	}(c)
 	c.paused = false
+}
+
+func (c *Clock) updateInterval() {
+	c.pause()
+	c.start()
 }
 
 func (c *Clock) pause() {
