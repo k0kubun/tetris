@@ -79,7 +79,8 @@ func drawMino(mino *Mino, xOffset, yOffset int) {
 			color := colorByChar(char)
 
 			if color != termbox.ColorDefault {
-				drawCell(x+mino.x+xOffset, y+mino.y+yOffset, color)
+				termbox.SetCell(2*(x+mino.x+xOffset)-1, y+mino.y+yOffset, '▓', color, color^termbox.AttrBold)
+				termbox.SetCell(2*(x+mino.x+xOffset), y+mino.y+yOffset, ' ', color, color^termbox.AttrBold)
 			}
 		}
 	}
