@@ -6,6 +6,7 @@ import (
 
 const (
 	levelMax = 20
+	scoreMax = 999999
 )
 
 var (
@@ -45,6 +46,16 @@ func deleteCheck() {
 		board.deleteLine(line)
 	}
 	deleteLines += len(lines)
+	switch len(lines) {
+	case 1:
+		addScore(40 * (level + 1))
+	case 2:
+		addScore(100 * (level + 1))
+	case 3:
+		addScore(300 * (level + 1))
+	case 4:
+		addScore(1200 * (level + 1))
+	}
 	levelUpdate()
 
 	clock.start()
@@ -59,6 +70,13 @@ func levelUpdate() {
 	if level < targetLevel {
 		level = targetLevel
 		clock.updateInterval()
+	}
+}
+
+func addScore(add int) {
+	score += add
+	if score > scoreMax {
+		score = scoreMax
 	}
 }
 

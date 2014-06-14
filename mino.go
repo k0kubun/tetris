@@ -82,17 +82,23 @@ func (m *Mino) applyGravity() {
 }
 
 func (m *Mino) drop() {
-	m.putBottom()
+	addScore(m.putBottom())
 	board.setCells(m.cells())
 	pushMino()
 }
 
-func (m *Mino) putBottom() {
+func (m *Mino) putBottom() int {
+	distance := -1
 	dstMino := *m
 	for !dstMino.conflicts() {
 		*m = dstMino
 		dstMino.forceMoveDown()
+		distance++
 	}
+	if distance < 0 {
+		distance = 0
+	}
+	return distance
 }
 
 func (m *Mino) moveDown() {
