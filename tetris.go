@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/nsf/termbox-go"
+	"os"
+	"strconv"
 )
 
 const (
@@ -16,6 +18,7 @@ var (
 	nextMino    *Mino
 	score       int
 	level       int
+	initLevel   int
 	deleteLines int
 )
 
@@ -23,8 +26,9 @@ func initGame() {
 	board = NewBoard()
 	initMino()
 	score = 0
-	level = 1
+	level = initLevel
 	deleteLines = 0
+	clock.start()
 	refreshScreen()
 }
 
@@ -108,11 +112,21 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 	termbox.Flush()
 
-	initGame()
 	clock = NewClock(func() {
 		currentMino.applyGravity()
 		refreshScreen()
 	})
-	clock.start()
+
+	initLevel = 1
+	if len(os.Args) > 1 {
+		num, err := strconv.Atoi(os.Args[1])
+		if err != nil {
+			panic(err)
+		}
+		if 0 < num && num < 10 {
+			initLevel = num
+		}
+	}
+	initGame()
 	waitKeyInput()
 }
