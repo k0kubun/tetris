@@ -61,6 +61,17 @@ func refreshScreen() {
 	rewriteScreen(func() {
 		drawDropMarker()
 		drawCurrentMino()
+		if clock.gameover {
+			for j := 0; j < boardHeight; j++ {
+				board.colorizeLine(j, termbox.ColorBlack)
+			}
+			drawText(10, 4, "GAME OVER", termbox.ColorWhite, termbox.ColorBlack)
+			drawText(7, 6, "<SPC> to continue", termbox.ColorWhite, termbox.ColorBlack)
+
+			for i := 1; i <= 10; i++ {
+				drawText(9, 7+i, fmt.Sprintf("%2d: %6d", i, 999999), termbox.ColorWhite, termbox.ColorBlack)
+			}
+		}
 	})
 }
 

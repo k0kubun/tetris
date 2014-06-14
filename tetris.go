@@ -4,11 +4,13 @@ import (
 	"github.com/nsf/termbox-go"
 	"os"
 	"strconv"
+	"time"
 )
 
 const (
-	levelMax = 20
-	scoreMax = 999999
+	levelMax         = 20
+	scoreMax         = 999999
+	gameoverDuration = 50
 )
 
 var (
@@ -28,7 +30,6 @@ func initGame() {
 	score = 0
 	level = initLevel
 	deleteLines = 0
-	clock.start()
 	refreshScreen()
 }
 
@@ -99,7 +100,19 @@ func pushMino() {
 }
 
 func gameOver() {
-	initGame()
+	clock.over()
+
+	clock.lock = true
+	for j := 0; j < boardHeight; j++ {
+		rewriteScreen(func() {
+			for y := boardHeight - 1; y > boardHeight-1-j; y -= 1 {
+				board.colorizeLine(y, termbox.ColorBlack)
+			}
+		})
+		timer := time.NewTimer(gameoverDuration * time.Millisecond)
+		<-timer.C
+	}
+	clock.lock = false
 }
 
 func main() {
@@ -128,5 +141,6 @@ func main() {
 		}
 	}
 	initGame()
+	clock.start()
 	waitKeyInput()
 }

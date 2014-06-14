@@ -10,14 +10,25 @@ func waitKeyInput() {
 		case termbox.EventKey:
 			if ev.Ch == 'q' || ev.Key == termbox.KeyCtrlC || ev.Key == termbox.KeyCtrlD {
 				return
-			} else if ev.Ch == 'p' {
-				if clock.paused {
-					clock.start()
-				} else {
-					clock.pause()
+			} else {
+				if clock.lock {
+					continue
+				} else if clock.gameover {
+					if ev.Key == termbox.KeySpace {
+						initGame()
+						clock.start()
+					}
+					continue
+				} else if clock.paused {
+					if ev.Ch == 'p' {
+						clock.start()
+					}
+					continue
 				}
-			} else if !clock.paused {
-				if ev.Ch == 'z' {
+
+				if ev.Ch == 'p' {
+					clock.pause()
+				} else if ev.Ch == 'z' {
 					currentMino.rotateLeft()
 				} else if ev.Ch == 'x' || ev.Key == termbox.KeyArrowUp {
 					currentMino.rotateRight()

@@ -9,12 +9,16 @@ type Clock struct {
 	callback func()
 	stop     chan bool
 	paused   bool
+	gameover bool
+	lock     bool
 }
 
 func NewClock(callback func()) *Clock {
 	clock := &Clock{}
 	clock.callback = callback
 	clock.paused = false
+	clock.gameover = false
+	clock.lock = false
 	return clock
 }
 
@@ -36,11 +40,18 @@ func (c *Clock) start() {
 		}
 	}(c)
 	c.paused = false
+	c.gameover = false
 }
 
 func (c *Clock) updateInterval() {
 	c.pause()
 	c.start()
+}
+
+func (c *Clock) over() {
+	c.ticker.Stop()
+	c.gameover = true
+	c.paused = true
 }
 
 func (c *Clock) pause() {
