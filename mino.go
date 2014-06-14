@@ -1,0 +1,49 @@
+package main
+
+type Mino struct {
+	blockType      int
+	rightTurnCount int
+	x              int
+	y              int
+}
+
+var (
+	blocks = []string{
+		`
+		  ....
+			.gg.
+			gg..
+			....
+		`, `
+		  ....
+			.rr.
+			..rr
+			....
+		`, `
+		  ....
+			.YY.
+			.YY.
+			....
+		`, `
+		  ....
+			....
+			CCCC
+			....
+		`, `
+		  ....
+			.M..
+			MMM.
+			....
+		`, `
+		  ....
+			.b..
+			.bbb
+			....
+		`, `
+		  ....
+			..R.
+			RRR.
+			....
+		`,
+	}
+)
