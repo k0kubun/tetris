@@ -89,18 +89,18 @@ func (m *Mino) applyGravity() {
 func (m *Mino) moveDown() {
 	dstMino := *m
 	dstMino.y++
-	if dstMino.isOnBoard() {
-		m.y++
-	} else {
+	if dstMino.conflicts() {
 		board.setCells(m.cells())
 		pushMino()
+	} else {
+		m.y++
 	}
 }
 
 func (m *Mino) moveLeft() {
 	dstMino := *m
 	dstMino.x--
-	if dstMino.isOnBoard() {
+	if !dstMino.conflicts() {
 		m.x--
 	}
 }
@@ -108,7 +108,7 @@ func (m *Mino) moveLeft() {
 func (m *Mino) moveRight() {
 	dstMino := *m
 	dstMino.x++
-	if dstMino.isOnBoard() {
+	if !dstMino.conflicts() {
 		m.x++
 	}
 }
@@ -116,7 +116,7 @@ func (m *Mino) moveRight() {
 func (m *Mino) rotateRight() {
 	dstMino := *m
 	dstMino.forceRotateRight()
-	if dstMino.isOnBoard() {
+	if !dstMino.conflicts() {
 		m.forceRotateRight()
 	}
 }
@@ -133,7 +133,7 @@ func (m *Mino) forceRotateRight() {
 func (m *Mino) rotateLeft() {
 	dstMino := *m
 	dstMino.forceRotateLeft()
-	if dstMino.isOnBoard() {
+	if !dstMino.conflicts() {
 		m.forceRotateLeft()
 	}
 }
@@ -147,14 +147,13 @@ func (m *Mino) forceRotateLeft() {
 	}
 }
 
-func (m *Mino) isOnBoard() bool {
+func (m *Mino) conflicts() bool {
 	for _, cell := range m.cells() {
-		cell.isOnBoard()
-		if !cell.isOnBoard() {
-			return false
+		if cell.conflicts() {
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 func (m *Mino) cells() []*Cell {

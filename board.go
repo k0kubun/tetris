@@ -8,7 +8,7 @@ import (
 const (
 	boardWidth  = 10
 	boardHeight = 18
-	blankColor  = 'k'
+	blankColor  = termbox.ColorBlack
 )
 
 var (

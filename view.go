@@ -94,7 +94,7 @@ func drawCells(text string, left, top int) {
 }
 
 func drawCell(x, y int, color termbox.Attribute) {
-	if color != termbox.ColorDefault && color != colorByChar(blankColor) {
+	if color != termbox.ColorDefault && color != blankColor {
 		termbox.SetCell(2*x-1, y, '▓', color, color^termbox.AttrBold)
 		termbox.SetCell(2*x, y, ' ', color, color^termbox.AttrBold)
 	}
@@ -125,5 +125,5 @@ func charByColor(color termbox.Attribute) rune {
 			return ch
 		}
 	}
-	return blankColor
+	return '.'
 }
