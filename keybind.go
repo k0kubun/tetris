@@ -9,10 +9,16 @@ func waitKeyInput() {
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
 			if ev.Ch == 'q' || ev.Key == termbox.KeyCtrlC || ev.Key == termbox.KeyCtrlD {
-				// Quit
+				// quit application
 				return
 			} else if ev.Ch == 'p' {
-				// Pause
+				if clock.paused {
+					// unpause
+					clock.start()
+				} else {
+					// pause
+					clock.pause()
+				}
 			} else if ev.Ch == 'z' {
 				// Left Turn
 			} else if ev.Ch == 'x' || ev.Key == termbox.KeyArrowUp {

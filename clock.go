@@ -12,11 +12,13 @@ type Clock struct {
 	ticker   *time.Ticker
 	callback func()
 	stop     chan bool
+	paused   bool
 }
 
 func NewClock(callback func()) *Clock {
 	clock := &Clock{}
 	clock.callback = callback
+	clock.paused = false
 	return clock
 }
 
@@ -25,6 +27,7 @@ func (c *Clock) start() {
 		c.stop <- true
 	}
 	c.stop = make(chan bool)
+
 	go func(c *Clock) {
 		c.ticker = time.NewTicker(interval)
 		for {
@@ -36,8 +39,10 @@ func (c *Clock) start() {
 			}
 		}
 	}(c)
+	c.paused = false
 }
 
 func (c *Clock) pause() {
 	c.ticker.Stop()
+	c.paused = true
 }
