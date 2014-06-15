@@ -92,6 +92,9 @@ func pushMino() {
 	if currentMino != nil {
 		currentMino.x, currentMino.y = defaultMinoX, defaultMinoY
 		if currentMino.conflicts() {
+			ranking := NewRanking()
+			ranking.insertScore(score)
+			ranking.save()
 			gameOver()
 			return
 		}
