@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/nsf/termbox-go"
 	"strings"
+
+	"github.com/nsf/termbox-go"
 )
 
 const (
@@ -160,10 +161,10 @@ func drawCells(text string, left, top int) {
 func drawCell(x, y int, color termbox.Attribute) {
 	if color != termbox.ColorDefault && color != blankColor {
 		if color == colorByChar('K') {
-			termbox.SetCell(2*x-1, y, '▓', color, termbox.ColorWhite)
+			termbox.SetCell(2*x-1, y, ' ', color, termbox.ColorWhite)
 			termbox.SetCell(2*x, y, ' ', color, termbox.ColorWhite)
 		} else {
-			termbox.SetCell(2*x-1, y, '▓', color, color^termbox.AttrBold)
+			termbox.SetCell(2*x-1, y, ' ', color, color^termbox.AttrBold)
 			termbox.SetCell(2*x, y, ' ', color, color^termbox.AttrBold)
 		}
 	}
