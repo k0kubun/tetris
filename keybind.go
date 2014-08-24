@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/nsf/termbox-go"
+	"github.com/k0kubun/termbox-go"
 )
 
 func waitKeyInput() {
