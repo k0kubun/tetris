@@ -2,8 +2,6 @@
 
 TETRIS for your terminal written in Go language
 
-![](http://pic.k0kubun.com/GKj7TYSpEITG154.gif)
-
 ## Installation
 
 ```bash
