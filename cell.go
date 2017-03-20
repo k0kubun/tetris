@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/k0kubun/termbox-go"
+	"github.com/nsf/termbox-go"
 )
 
 type Cell struct {
@@ -26,4 +26,8 @@ func (c *Cell) isOverlapped() bool {
 
 func (c *Cell) isOnWall() bool {
 	return c.x < 0 || boardWidth <= c.x || boardHeight <= c.y
+}
+
+func (c *Cell) isInLocation(x int, y int) bool {
+	return c.x == x && c.y == y
 }
