@@ -118,20 +118,40 @@ func (view *View) drawBackground() {
 }
 
 func (view *View) drawTexts() {
-	view.drawText(32, 9, "SCORE", termbox.ColorWhite, termbox.ColorBlue)
-	view.drawText(32, 10, fmt.Sprintf("%7d", engine.score), termbox.ColorBlack, termbox.ColorWhite)
+	xOffset := boardXOffset + boardWidth*2 + 7
+	yOffset := boardYOffset + 6
 
-	view.drawText(32, 13, "LEVEL", termbox.ColorWhite, termbox.ColorBlue)
-	view.drawText(32, 14, fmt.Sprintf("%5d", engine.level), termbox.ColorBlack, termbox.ColorWhite)
+	view.drawText(xOffset, yOffset, "SCORE:", termbox.ColorWhite, termbox.ColorBlue)
+	view.drawText(xOffset+7, yOffset, fmt.Sprintf("%7d", engine.score), termbox.ColorBlack, termbox.ColorWhite)
 
-	view.drawText(32, 16, "LINES", termbox.ColorWhite, termbox.ColorBlue)
-	view.drawText(32, 17, fmt.Sprintf("%5d", engine.deleteLines), termbox.ColorBlack, termbox.ColorWhite)
+	yOffset += 2
 
-	view.drawText(3, 22, "  ←     z     <SPC>    x,↑   →", termbox.ColorWhite, termbox.ColorBlack)
-	view.drawText(3, 23, " left     ↺   drop      ↻  right", termbox.ColorBlack, termbox.ColorWhite)
+	view.drawText(xOffset, yOffset, "LEVEL:", termbox.ColorWhite, termbox.ColorBlue)
+	view.drawText(xOffset+7, yOffset, fmt.Sprintf("%5d", engine.level), termbox.ColorBlack, termbox.ColorWhite)
 
-	view.drawText(30, 19, " p: pause", termbox.ColorWhite, termbox.ColorDefault)
-	view.drawText(30, 20, " q: quit", termbox.ColorWhite, termbox.ColorDefault)
+	yOffset += 2
+
+	view.drawText(xOffset, yOffset, "LINES:", termbox.ColorWhite, termbox.ColorBlue)
+	view.drawText(xOffset+7, yOffset, fmt.Sprintf("%5d", engine.deleteLines), termbox.ColorBlack, termbox.ColorWhite)
+
+	yOffset += 2
+
+	// ascii arrow characters add extra two spaces
+	view.drawText(xOffset, yOffset, "←  - left", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset++
+	view.drawText(xOffset, yOffset, "z    - rotate left", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset++
+	view.drawText(xOffset, yOffset, "x,↑- rotate right", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset++
+	view.drawText(xOffset, yOffset, "→  - right", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset++
+	view.drawText(xOffset, yOffset, "↓  - slow drop", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset++
+	view.drawText(xOffset, yOffset, "sbar - full drop", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset++
+	view.drawText(xOffset, yOffset, "p    - pause", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset++
+	view.drawText(xOffset, yOffset, "q    - quit", termbox.ColorWhite, termbox.ColorBlack)
 }
 
 func (view *View) drawText(x, y int, text string, fg, bg termbox.Attribute) {
@@ -146,14 +166,19 @@ func (view *View) drawCurrentMino() {
 
 func (view *View) drawDropMarker() {
 	marker := *board.currentMino
-	marker.putBottom()
+	for !marker.conflicts() {
+		marker.y++
+	}
+	if marker.conflicts() {
+		marker.y--
+	}
 
 	lines := strings.Split(marker.block, "\n")
 	for y, line := range lines {
 		for x, char := range line {
-			if isOnBoard(x+marker.x, y+marker.y) && view.colorByChar(char) != blankColor &&
-				view.colorByChar(char) != termbox.ColorDefault {
-				view.drawCell(x+marker.x+boardXOffset, y+marker.y+boardYOffset, view.colorByChar('K'))
+			if isOnBoard(x+marker.x, y+marker.y) && colorMapping[char] != blankColor &&
+				colorMapping[char] != termbox.ColorDefault {
+				view.drawCell(x+marker.x+boardXOffset, y+marker.y+boardYOffset, colorMapping['K'])
 			}
 		}
 	}
