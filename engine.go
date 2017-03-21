@@ -42,7 +42,7 @@ func (engine *Engine) DeleteCheck() {
 	clock.pause()
 
 	lines := board.fullLines()
-	board.showDeleteAnimation(lines)
+	showDeleteAnimation(lines)
 	for _, line := range lines {
 		board.deleteLine(line)
 	}
@@ -88,7 +88,7 @@ func gameOver() {
 	for j := 0; j < boardHeight; j++ {
 		rewriteScreen(func() {
 			for y := boardHeight - 1; y > boardHeight-1-j; y -= 1 {
-				board.colorizeLine(y, termbox.ColorBlack)
+				colorizeLine(y, termbox.ColorBlack)
 			}
 		})
 		timer := time.NewTimer(gameoverDuration * time.Millisecond)

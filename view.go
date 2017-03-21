@@ -63,7 +63,7 @@ func refreshScreen() {
 		drawCurrentMino()
 		if clock.gameover {
 			for j := 0; j < boardHeight; j++ {
-				board.colorizeLine(j, termbox.ColorBlack)
+				colorizeLine(j, termbox.ColorBlack)
 			}
 			drawText(10, 4, "GAME OVER", termbox.ColorWhite, termbox.ColorBlack)
 			drawText(7, 6, "<SPC> to continue", termbox.ColorWhite, termbox.ColorBlack)
@@ -197,11 +197,11 @@ func charByColor(color termbox.Attribute) rune {
 	return '.'
 }
 
-func (b *Board) showDeleteAnimation(lines []int) {
+func showDeleteAnimation(lines []int) {
 	for times := 0; times < 3; times++ {
 		rewriteScreen(func() {
 			for _, line := range lines {
-				b.colorizeLine(line, termbox.ColorCyan)
+				colorizeLine(line, termbox.ColorCyan)
 			}
 		})
 		timer := time.NewTimer(160 * time.Millisecond)
@@ -213,7 +213,7 @@ func (b *Board) showDeleteAnimation(lines []int) {
 	}
 }
 
-func (b *Board) colorizeLine(line int, color termbox.Attribute) {
+func colorizeLine(line int, color termbox.Attribute) {
 	for i := 0; i < boardWidth; i++ {
 		drawBack(i+boardXOffset, line+boardYOffset, color)
 	}
