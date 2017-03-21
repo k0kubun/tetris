@@ -7,7 +7,6 @@ import (
 )
 
 const (
-	defaultMinoX, defaultMinoY = 3, -1
 	minoWidth, minoHeight      = 4, 4
 )
 
@@ -77,14 +76,10 @@ func (m *Mino) setCell(x, y int, cell rune) {
 	m.block = string(buf)
 }
 
-func (m *Mino) applyGravity() {
-	m.moveDown()
-}
-
 func (m *Mino) drop() {
 	addScore(m.putBottom())
 	board.setCells(m.cells())
-	pushMino()
+	board.addMino()
 }
 
 func (m *Mino) putBottom() int {
@@ -107,7 +102,7 @@ func (m *Mino) moveDown() {
 
 	if dstMino.conflicts() {
 		board.setCells(m.cells())
-		pushMino()
+		board.addMino()
 	} else {
 		m.forceMoveDown()
 	}

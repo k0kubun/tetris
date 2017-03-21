@@ -8,6 +8,8 @@ import (
 )
 
 const (
+	boardWidth       = 10
+	boardHeight      = 18
 	levelMax         = 20
 	scoreMax         = 999999
 	gameoverDuration = 50
@@ -16,8 +18,6 @@ const (
 var (
 	board       *Board
 	clock       *Clock
-	currentMino *Mino
-	nextMino    *Mino
 	score       int
 	level       int
 	initLevel   int
@@ -26,17 +26,10 @@ var (
 
 func initGame() {
 	board = NewBoard()
-	initMino()
 	score = 0
 	level = initLevel
 	deleteLines = 0
 	refreshScreen()
-}
-
-func initMino() {
-	currentMino, nextMino = nil, nil
-	pushMino()
-	pushMino()
 }
 
 func deleteCheck() {
@@ -85,23 +78,6 @@ func addScore(add int) {
 	}
 }
 
-func pushMino() {
-	deleteCheck()
-
-	currentMino = nextMino
-	if currentMino != nil {
-		currentMino.x, currentMino.y = defaultMinoX, defaultMinoY
-		if currentMino.conflicts() {
-			ranking := NewRanking()
-			ranking.insertScore(score)
-			ranking.save()
-			gameOver()
-			return
-		}
-	}
-	nextMino = NewMino()
-}
-
 func gameOver() {
 	clock.over()
 
@@ -129,7 +105,7 @@ func main() {
 	termbox.Flush()
 
 	clock = NewClock(func() {
-		currentMino.applyGravity()
+		board.ApplyGravity()
 		refreshScreen()
 	})
 

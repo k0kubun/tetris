@@ -112,11 +112,11 @@ func drawText(x, y int, text string, fg, bg termbox.Attribute) {
 }
 
 func drawCurrentMino() {
-	drawMino(currentMino, boardXOffset, boardYOffset)
+	drawMino(board.currentMino, boardXOffset, boardYOffset)
 }
 
 func drawDropMarker() {
-	marker := *currentMino
+	marker := *board.currentMino
 	marker.putBottom()
 
 	lines := strings.Split(marker.block, "\n")
@@ -131,7 +131,7 @@ func drawDropMarker() {
 }
 
 func drawNextMino() {
-	drawMino(nextMino, nextMinoXOffset-nextMino.x, nextMinoYOffset-nextMino.y)
+	drawMino(board.nextMino, nextMinoXOffset-board.nextMino.x, nextMinoYOffset-board.nextMino.y)
 }
 
 func drawMino(mino *Mino, xOffset, yOffset int) {

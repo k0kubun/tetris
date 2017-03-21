@@ -7,14 +7,16 @@ import (
 )
 
 const (
-	boardWidth        = 10
-	boardHeight       = 18
+	defaultMinoX      = 3
+	defaultMinoY      = -1
 	blankColor        = termbox.ColorBlack
 	animationDuration = 160
 )
 
 type Board struct {
-	colors [boardWidth][boardHeight]termbox.Attribute
+	colors      [boardWidth][boardHeight]termbox.Attribute
+	currentMino *Mino
+	nextMino    *Mino
 }
 
 func NewBoard() *Board {
@@ -24,6 +26,10 @@ func NewBoard() *Board {
 			board.colors[i][j] = blankColor
 		}
 	}
+	board.nextMino = NewMino()
+	board.currentMino = NewMino()
+	board.currentMino.x = defaultMinoX
+	board.currentMino.y = defaultMinoY
 	return board
 }
 
@@ -77,6 +83,28 @@ func (b *Board) setCells(cells []*Cell) {
 
 func (b *Board) setCell(cell *Cell) {
 	b.colors[cell.x][cell.y] = cell.color
+}
+
+func (b *Board) addMino() {
+	deleteCheck()
+
+	b.currentMino = b.nextMino
+	if b.currentMino != nil {
+		b.currentMino.x = defaultMinoX
+		b.currentMino.y = defaultMinoY
+		if b.currentMino.conflicts() {
+			ranking := NewRanking()
+			ranking.insertScore(score)
+			ranking.save()
+			gameOver()
+			return
+		}
+	}
+	b.nextMino = NewMino()
+}
+
+func (b *Board) ApplyGravity() {
+	board.currentMino.moveDown()
 }
 
 func isOnBoard(x, y int) bool {

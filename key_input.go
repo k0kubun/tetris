@@ -36,24 +36,24 @@ func ProcessEvent(event *termbox.Event) {
 	if event.Ch == 0 {
 		switch event.Key {
 		case termbox.KeySpace:
-			currentMino.drop()
+			board.currentMino.drop()
 		case termbox.KeyArrowUp:
-			currentMino.rotateRight()
+			board.currentMino.rotateRight()
 		case termbox.KeyArrowDown:
-			currentMino.moveDown()
+			board.currentMino.moveDown()
 		case termbox.KeyArrowLeft:
-			currentMino.moveLeft()
+			board.currentMino.moveLeft()
 		case termbox.KeyArrowRight:
-			currentMino.moveRight()
+			board.currentMino.moveRight()
 		}
 	} else {
 		switch event.Ch {
 		case 'p':
 			clock.pause()
 		case 'z':
-			currentMino.rotateLeft()
+			board.currentMino.rotateLeft()
 		case 'x':
-			currentMino.rotateRight()
+			board.currentMino.rotateRight()
 		}
 	}
 
