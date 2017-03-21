@@ -29,7 +29,7 @@ func (c *Clock) start() {
 	c.stop = make(chan bool)
 
 	go func(c *Clock) {
-		c.ticker = time.NewTicker(time.Duration(10*(50-2*level)) * time.Millisecond)
+		c.ticker = time.NewTicker(time.Duration(10*(50-2*engine.level)) * time.Millisecond)
 		for {
 			select {
 			case <-c.ticker.C:

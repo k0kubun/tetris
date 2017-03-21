@@ -4,7 +4,6 @@ import (
 	"github.com/nsf/termbox-go"
 	"os"
 	"strconv"
-	"time"
 )
 
 const (
@@ -15,8 +14,9 @@ const (
 )
 
 var (
-	board *Board
-	clock *Clock
+	engine *Engine
+	board  *Board
+	clock  *Clock
 )
 
 func main() {
@@ -29,19 +29,21 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 	termbox.Flush()
 
+	engine = NewEngine()
+
 	clock = NewClock(func() {
 		board.ApplyGravity()
 		refreshScreen()
 	})
 
-	initLevel = 1
+	engine.initLevel = 1
 	if len(os.Args) > 1 {
 		num, err := strconv.Atoi(os.Args[1])
 		if err != nil {
 			panic(err)
 		}
 		if 0 < num && num < 10 {
-			initLevel = num
+			engine.initLevel = num
 		}
 	}
 	initGame()

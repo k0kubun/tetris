@@ -1,23 +1,32 @@
 package main
 
+import (
+	"github.com/nsf/termbox-go"
+	"time"
+)
+
 const (
 	levelMax         = 20
 	scoreMax         = 999999
 	gameoverDuration = 50
 )
 
-var (
+type Engine struct {
 	score       int
 	level       int
 	initLevel   int
 	deleteLines int
-)
+}
+
+func NewEngine() *Engine {
+	return &Engine{}
+}
 
 func initGame() {
 	board = NewBoard()
-	score = 0
-	level = initLevel
-	deleteLines = 0
+	engine.score = 0
+	engine.level = engine.initLevel
+	engine.deleteLines = 0
 	refreshScreen()
 }
 
@@ -32,16 +41,16 @@ func deleteCheck() {
 	for _, line := range lines {
 		board.deleteLine(line)
 	}
-	deleteLines += len(lines)
+	engine.deleteLines += len(lines)
 	switch len(lines) {
 	case 1:
-		addScore(40 * (level + 1))
+		addScore(40 * (engine.level + 1))
 	case 2:
-		addScore(100 * (level + 1))
+		addScore(100 * (engine.level + 1))
 	case 3:
-		addScore(300 * (level + 1))
+		addScore(300 * (engine.level + 1))
 	case 4:
-		addScore(1200 * (level + 1))
+		addScore(1200 * (engine.level + 1))
 	}
 	levelUpdate()
 
@@ -49,21 +58,21 @@ func deleteCheck() {
 }
 
 func levelUpdate() {
-	if level == levelMax {
+	if engine.level == levelMax {
 		return
 	}
 
-	targetLevel := deleteLines / 10
-	if level < targetLevel {
-		level = targetLevel
+	targetLevel := engine.deleteLines / 10
+	if engine.level < targetLevel {
+		engine.level = targetLevel
 		clock.updateInterval()
 	}
 }
 
 func addScore(add int) {
-	score += add
-	if score > scoreMax {
-		score = scoreMax
+	engine.score += add
+	if engine.score > scoreMax {
+		engine.score = scoreMax
 	}
 }
 

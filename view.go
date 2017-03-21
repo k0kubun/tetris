@@ -90,13 +90,13 @@ func rewriteScreen(rewrite func()) {
 
 func drawTexts() {
 	drawText(32, 9, "SCORE", termbox.ColorWhite, termbox.ColorBlue)
-	drawText(32, 10, fmt.Sprintf("%7d", score), termbox.ColorBlack, termbox.ColorWhite)
+	drawText(32, 10, fmt.Sprintf("%7d", engine.score), termbox.ColorBlack, termbox.ColorWhite)
 
 	drawText(32, 13, "LEVEL", termbox.ColorWhite, termbox.ColorBlue)
-	drawText(32, 14, fmt.Sprintf("%5d", level), termbox.ColorBlack, termbox.ColorWhite)
+	drawText(32, 14, fmt.Sprintf("%5d", engine.level), termbox.ColorBlack, termbox.ColorWhite)
 
 	drawText(32, 16, "LINES", termbox.ColorWhite, termbox.ColorBlue)
-	drawText(32, 17, fmt.Sprintf("%5d", deleteLines), termbox.ColorBlack, termbox.ColorWhite)
+	drawText(32, 17, fmt.Sprintf("%5d", engine.deleteLines), termbox.ColorBlack, termbox.ColorWhite)
 
 	drawText(3, 22, "  ←     z     <SPC>    x,↑   →", termbox.ColorWhite, termbox.ColorBlack)
 	drawText(3, 23, " left     ↺   drop      ↻  right", termbox.ColorBlack, termbox.ColorWhite)

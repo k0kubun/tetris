@@ -94,7 +94,7 @@ func (b *Board) addMino() {
 		b.currentMino.y = defaultMinoY
 		if b.currentMino.conflicts() {
 			ranking := NewRanking()
-			ranking.insertScore(score)
+			ranking.insertScore(engine.score)
 			ranking.save()
 			gameOver()
 			return
