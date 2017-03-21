@@ -57,8 +57,16 @@ var (
 	}
 )
 
-func refreshScreen() {
-	rewriteScreen(func() {
+func refreshScreen(rewrite func()) {
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+
+	drawBacks(background, 0, 0)
+	drawCells(board.text(), boardXOffset, boardYOffset)
+	drawNextMino()
+	drawTexts()
+	if rewrite != nil {
+		rewrite()
+	} else {
 		drawDropMarker()
 		drawCurrentMino()
 		if clock.gameover {
@@ -73,17 +81,7 @@ func refreshScreen() {
 				drawText(9, 8+idx, fmt.Sprintf("%2d: %6d", idx+1, sc), termbox.ColorWhite, termbox.ColorBlack)
 			}
 		}
-	})
-}
-
-func rewriteScreen(rewrite func()) {
-	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-
-	drawBacks(background, 0, 0)
-	drawCells(board.text(), boardXOffset, boardYOffset)
-	drawNextMino()
-	drawTexts()
-	rewrite()
+	}
 
 	termbox.Flush()
 }
@@ -199,7 +197,7 @@ func charByColor(color termbox.Attribute) rune {
 
 func showDeleteAnimation(lines []int) {
 	for times := 0; times < 3; times++ {
-		rewriteScreen(func() {
+		refreshScreen(func() {
 			for _, line := range lines {
 				colorizeLine(line, termbox.ColorCyan)
 			}
@@ -207,7 +205,7 @@ func showDeleteAnimation(lines []int) {
 		timer := time.NewTimer(160 * time.Millisecond)
 		<-timer.C
 
-		rewriteScreen(func() {})
+		refreshScreen(func() {})
 		timer = time.NewTimer(160 * time.Millisecond)
 		<-timer.C
 	}

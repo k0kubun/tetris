@@ -24,7 +24,7 @@ func NewEngine() *Engine {
 
 func (engine *Engine) tick() {
 	board.ApplyGravity()
-	refreshScreen()
+	refreshScreen(nil)
 }
 
 func initGame() {
@@ -32,7 +32,7 @@ func initGame() {
 	engine.score = 0
 	engine.level = engine.initLevel
 	engine.deleteLines = 0
-	refreshScreen()
+	refreshScreen(nil)
 }
 
 func (engine *Engine) DeleteCheck() {
@@ -86,7 +86,7 @@ func gameOver() {
 
 	clock.lock = true
 	for j := 0; j < boardHeight; j++ {
-		rewriteScreen(func() {
+		refreshScreen(func() {
 			for y := boardHeight - 1; y > boardHeight-1-j; y -= 1 {
 				colorizeLine(y, termbox.ColorBlack)
 			}
