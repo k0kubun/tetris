@@ -51,6 +51,51 @@ func (b *Board) fullLines() []int {
 	return fullLines
 }
 
+func (b *Board) hasFullLine() bool {
+	for j := 0; j < boardHeight; j++ {
+		if b.isFullLine(j) {
+			return true
+		}
+	}
+	return false
+}
+
+func (b *Board) isFullLine(y int) bool {
+	hasBlank := false
+	for i := 0; i < boardWidth; i++ {
+		if b.colors[i][y] == blankColor {
+			hasBlank = true
+			break
+		}
+	}
+	return !hasBlank
+}
+
+func (b *Board) setCell(cell *Cell) {
+	b.colors[cell.x][cell.y] = cell.color
+}
+
+func (b *Board) setCells(cells []*Cell) {
+	for _, cell := range cells {
+		b.setCell(cell)
+	}
+}
+
+func isOnBoard(x, y int) bool {
+	return (0 <= x && x < boardWidth) && (0 <= y && y < boardHeight)
+}
+
+func (b *Board) text() string {
+	text := ""
+	for j := 0; j < boardHeight; j++ {
+		for i := 0; i < boardWidth; i++ {
+			text = fmt.Sprintf("%s%c", text, charByColor(b.colors[i][j]))
+		}
+		text = fmt.Sprintf("%s\n", text)
+	}
+	return text
+}
+
 func (b *Board) showDeleteAnimation(lines []int) {
 	for times := 0; times < 3; times++ {
 		rewriteScreen(func() {
@@ -71,49 +116,4 @@ func (b *Board) colorizeLine(line int, color termbox.Attribute) {
 	for i := 0; i < boardWidth; i++ {
 		drawBack(i+boardXOffset, line+boardYOffset, color)
 	}
-}
-
-func (b *Board) isFullLine(y int) bool {
-	hasBlank := false
-	for i := 0; i < boardWidth; i++ {
-		if b.colors[i][y] == blankColor {
-			hasBlank = true
-			break
-		}
-	}
-	return !hasBlank
-}
-
-func (b *Board) hasFullLine() bool {
-	for j := 0; j < boardHeight; j++ {
-		if b.isFullLine(j) {
-			return true
-		}
-	}
-	return false
-}
-
-func (b *Board) text() string {
-	text := ""
-	for j := 0; j < boardHeight; j++ {
-		for i := 0; i < boardWidth; i++ {
-			text = fmt.Sprintf("%s%c", text, charByColor(b.colors[i][j]))
-		}
-		text = fmt.Sprintf("%s\n", text)
-	}
-	return text
-}
-
-func (b *Board) setCell(cell *Cell) {
-	b.colors[cell.x][cell.y] = cell.color
-}
-
-func (b *Board) setCells(cells []*Cell) {
-	for _, cell := range cells {
-		b.setCell(cell)
-	}
-}
-
-func isOnBoard(x, y int) bool {
-	return (0 <= x && x < boardWidth) && (0 <= y && y < boardHeight)
 }
