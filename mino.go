@@ -74,7 +74,7 @@ func (m *Mino) setCell(x, y int, cell rune) {
 }
 
 func (m *Mino) drop() {
-	addScore(m.putBottom())
+	engine.AddScore(m.putBottom())
 	board.setCells(m.cells())
 	board.addMino()
 }

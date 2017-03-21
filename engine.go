@@ -30,7 +30,7 @@ func initGame() {
 	refreshScreen()
 }
 
-func deleteCheck() {
+func (engine *Engine) DeleteCheck() {
 	if !board.hasFullLine() {
 		return
 	}
@@ -44,13 +44,13 @@ func deleteCheck() {
 	engine.deleteLines += len(lines)
 	switch len(lines) {
 	case 1:
-		addScore(40 * (engine.level + 1))
+		engine.AddScore(40 * (engine.level + 1))
 	case 2:
-		addScore(100 * (engine.level + 1))
+		engine.AddScore(100 * (engine.level + 1))
 	case 3:
-		addScore(300 * (engine.level + 1))
+		engine.AddScore(300 * (engine.level + 1))
 	case 4:
-		addScore(1200 * (engine.level + 1))
+		engine.AddScore(1200 * (engine.level + 1))
 	}
 	levelUpdate()
 
@@ -69,7 +69,7 @@ func levelUpdate() {
 	}
 }
 
-func addScore(add int) {
+func (engine *Engine) AddScore(add int) {
 	engine.score += add
 	if engine.score > scoreMax {
 		engine.score = scoreMax

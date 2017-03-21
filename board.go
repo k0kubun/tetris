@@ -86,7 +86,7 @@ func (b *Board) setCell(cell *Cell) {
 }
 
 func (b *Board) addMino() {
-	deleteCheck()
+	engine.DeleteCheck()
 
 	b.currentMino = b.nextMino
 	if b.currentMino != nil {
