@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	boardWidth   = 10
-	boardHeight  = 18
-	boardXOffset = 3
+	boardWidth  = 10
+	boardHeight = 20
+	// must be even boardXOffset
+	boardXOffset = 2
 	boardYOffset = 2
 	minoWidth    = 4
 	minoHeight   = 4

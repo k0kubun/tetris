@@ -56,11 +56,11 @@ func (view *View) RefreshScreen() {
 		view.drawGameOver()
 	} else {
 		view.drawBoard()
-		view.drawCurrentMino()
+		view.drawMino(board.currentMino, true)
 		view.drawDropMarker()
 	}
 
-	view.drawNextMino()
+	view.drawMino(board.nextMino, false)
 
 	termbox.Flush()
 }
@@ -72,8 +72,8 @@ func (view *View) drawBackground() {
 	// playing board
 	xOffset := boardXOffset
 	yOffset := boardYOffset - 1
-	xEnd := boardXOffset + boardWidth*2 + 4
-	yEnd := boardYOffset + boardHeight + 1
+	xEnd := boardXOffset + boardWidth*2 + 4 // the + 4 is for the board border
+	yEnd := boardYOffset + boardHeight + 1  // the + 1 is for the board border
 	for x := xOffset; x < xEnd; x++ {
 		for y := yOffset; y < yEnd; y++ {
 			if x == xOffset || x == xOffset+1 || x == xEnd-1 || x == xEnd-2 ||
@@ -88,8 +88,8 @@ func (view *View) drawBackground() {
 	// piece preview
 	xOffset = boardXOffset + boardWidth*2 + 7
 	yOffset = boardYOffset - 1
-	xEnd = xOffset + minoWidth*2 + 6
-	yEnd = yOffset + minoHeight + 2
+	xEnd = xOffset + minoWidth*2 + 6 // the + 6 is for the board border and next border
+	yEnd = yOffset + minoHeight + 2  // the + 2 is for the board border and next border
 	for x := xOffset; x < xEnd; x++ {
 		for y := yOffset; y < yEnd; y++ {
 			if x == xOffset || x == xOffset+1 || x == xEnd-1 || x == xEnd-2 ||
@@ -149,14 +149,11 @@ func (view *View) drawText(x, y int, text string, fg, bg termbox.Attribute) {
 }
 
 func (view *View) drawBoard() {
-	xOffset := boardXOffset + 2
-	yOffset := boardYOffset
-
 	for i := 0; i < boardWidth; i++ {
 		for j := 0; j < boardHeight; j++ {
 			if board.colors[i][j] != blankColor {
-				termbox.SetCell(2*i+xOffset, j+yOffset, '▓', board.colors[i][j], board.colors[i][j]^termbox.AttrBold)
-				termbox.SetCell(2*i+1+xOffset, j+yOffset, ' ', board.colors[i][j], board.colors[i][j]^termbox.AttrBold)
+				termbox.SetCell(2*i+boardXOffset+2, j+boardYOffset, '▓', board.colors[i][j], board.colors[i][j]^termbox.AttrBold)
+				termbox.SetCell(2*i+boardXOffset+3, j+boardYOffset, ' ', board.colors[i][j], board.colors[i][j]^termbox.AttrBold)
 			}
 		}
 	}
@@ -180,51 +177,37 @@ func (view *View) drawDropMarker() {
 		for x, char := range line {
 			if isOnBoard(x+marker.x, y+marker.y) && colorMapping[char] != blankColor &&
 				colorMapping[char] != termbox.ColorDefault {
-				view.drawCell(x+marker.x+boardXOffset, y+marker.y+boardYOffset, colorMapping['K'])
+				view.drawCell(x+marker.x, y+marker.y, colorMapping['K'])
 			}
 		}
 	}
 }
 
-func (view *View) drawNextMino() {
-	view.drawMino(board.nextMino, boardXOffset+boardWidth+4-board.nextMino.x, boardYOffset-board.nextMino.y)
-}
-
-func (view *View) drawCurrentMino() {
-	view.drawMino(board.currentMino, boardXOffset, boardYOffset)
-}
-
-func (view *View) drawMino(mino *Mino, xOffset, yOffset int) {
+func (view *View) drawMino(mino *Mino, onBoard bool) {
 	lines := strings.Split(mino.block, "\n")
 
 	for y, line := range lines {
 		for x, char := range line {
-			if isOnBoard(x+mino.x, y+mino.y) {
-				color := colorMapping[char]
-				view.drawCell(x+mino.x+xOffset, y+mino.y+yOffset, color)
+			if onBoard {
+				if isOnBoard(x+mino.x, y+mino.y) {
+					view.drawCell(x+mino.x, y+mino.y, colorMapping[char])
+				}
+			} else {
+				view.drawCell(x+mino.x, y+mino.y, colorMapping[char])
 			}
-		}
-	}
-}
-
-func (view *View) drawCells(text string, left, top int) {
-	lines := strings.Split(text, "\n")
-
-	for y, line := range lines {
-		for x, char := range line {
-			view.drawCell(left+x, top+y, colorMapping[char])
 		}
 	}
 }
 
 func (view *View) drawCell(x, y int, color termbox.Attribute) {
+	// the + 2 is for the board border
 	if color != termbox.ColorDefault && color != blankColor {
 		if color == colorMapping['K'] {
-			termbox.SetCell(2*x-1, y, '▓', color, termbox.ColorWhite)
-			termbox.SetCell(2*x, y, ' ', color, termbox.ColorWhite)
+			termbox.SetCell(2*x+boardXOffset+2, y+boardYOffset, '▓', color, termbox.ColorWhite)
+			termbox.SetCell(2*x+boardXOffset+3, y+boardYOffset, ' ', color, termbox.ColorWhite)
 		} else {
-			termbox.SetCell(2*x-1, y, '▓', color, color^termbox.AttrBold)
-			termbox.SetCell(2*x, y, ' ', color, color^termbox.AttrBold)
+			termbox.SetCell(2*x+boardXOffset+2, y+boardYOffset, '▓', color, color^termbox.AttrBold)
+			termbox.SetCell(2*x+boardXOffset+3, y+boardYOffset, ' ', color, color^termbox.AttrBold)
 		}
 	}
 }
@@ -279,7 +262,7 @@ func (view *View) ShowGameOverAnimation() {
 
 func (view *View) colorizeLine(y int, color termbox.Attribute) {
 	for x := 0; x < boardWidth; x++ {
-		termbox.SetCell((x+boardXOffset)*2-1, y+boardYOffset, ' ', termbox.ColorDefault, color)
-		termbox.SetCell((x+boardXOffset)*2, y+boardYOffset, ' ', termbox.ColorDefault, color)
+		termbox.SetCell(x*2+boardXOffset+2, y+boardYOffset, ' ', termbox.ColorDefault, color)
+		termbox.SetCell(x*2+boardXOffset+3, y+boardYOffset, ' ', termbox.ColorDefault, color)
 	}
 }

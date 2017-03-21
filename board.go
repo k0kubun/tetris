@@ -5,8 +5,10 @@ import (
 )
 
 const (
-	defaultMinoX = 3
-	defaultMinoY = -1
+	nextMinoX    = boardWidth + 4 // the + 4 is for the board border
+	nextMinoY    = 0
+	currentMinoX = 3
+	currentMinoY = -1
 )
 
 type Board struct {
@@ -23,9 +25,11 @@ func NewBoard() *Board {
 		}
 	}
 	board.nextMino = NewMino()
+	board.nextMino.x = nextMinoX
+	board.nextMino.y = nextMinoY
 	board.currentMino = NewMino()
-	board.currentMino.x = defaultMinoX
-	board.currentMino.y = defaultMinoY
+	board.currentMino.x = currentMinoX
+	board.currentMino.y = currentMinoY
 	return board
 }
 
@@ -84,16 +88,18 @@ func (b *Board) setCell(cell *Cell) {
 func (b *Board) addMino() {
 	engine.DeleteCheck()
 
-	b.nextMino.x = defaultMinoX
-	b.nextMino.y = defaultMinoY
+	b.nextMino.x = currentMinoX
+	b.nextMino.y = currentMinoY
 	if b.nextMino.conflicts() {
-		b.nextMino.x = 0
-		b.nextMino.y = 0
+		b.nextMino.x = nextMinoX
+		b.nextMino.y = nextMinoY
 		engine.GameOver()
 		return
 	}
 	b.currentMino = b.nextMino
 	b.nextMino = NewMino()
+	b.nextMino.x = nextMinoX
+	b.nextMino.y = nextMinoY
 }
 
 func (b *Board) ApplyGravity() {
