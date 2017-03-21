@@ -58,31 +58,28 @@ var (
 	deleteAnimation bool
 )
 
-func refreshScreen(rewrite func()) {
+func refreshScreen() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
 	drawBacks(background, 0, 0)
 	drawCells(board.text(), boardXOffset, boardYOffset)
 	drawNextMino()
 	drawTexts()
-	if rewrite != nil {
-		rewrite()
-	} else {
-		if !deleteAnimation {
-			drawDropMarker()
-		}
-		drawCurrentMino()
-		if clock.gameover {
-			for j := 0; j < boardHeight; j++ {
-				colorizeLine(j, termbox.ColorBlack)
-			}
-			drawText(10, 4, "GAME OVER", termbox.ColorWhite, termbox.ColorBlack)
-			drawText(7, 6, "<SPC> to continue", termbox.ColorWhite, termbox.ColorBlack)
 
-			ranking := NewRanking()
-			for idx, sc := range ranking.scores {
-				drawText(9, 8+idx, fmt.Sprintf("%2d: %6d", idx+1, sc), termbox.ColorWhite, termbox.ColorBlack)
-			}
+	if !deleteAnimation {
+		drawDropMarker()
+	}
+	drawCurrentMino()
+	if clock.gameover {
+		for j := 0; j < boardHeight; j++ {
+			colorizeLine(j, termbox.ColorBlack)
+		}
+		drawText(10, 4, "GAME OVER", termbox.ColorWhite, termbox.ColorBlack)
+		drawText(7, 6, "<SPC> to continue", termbox.ColorWhite, termbox.ColorBlack)
+
+		ranking := NewRanking()
+		for idx, sc := range ranking.scores {
+			drawText(9, 8+idx, fmt.Sprintf("%2d: %6d", idx+1, sc), termbox.ColorWhite, termbox.ColorBlack)
 		}
 	}
 
@@ -201,7 +198,7 @@ func charByColor(color termbox.Attribute) rune {
 func showDeleteAnimation(lines []int) {
 	deleteAnimation = true
 
-	refreshScreen(nil)
+	refreshScreen()
 
 	for times := 0; times < 3; times++ {
 		for _, line := range lines {
@@ -210,11 +207,19 @@ func showDeleteAnimation(lines []int) {
 		termbox.Flush()
 		time.Sleep(160 * time.Millisecond)
 
-		refreshScreen(nil)
+		refreshScreen()
 		time.Sleep(160 * time.Millisecond)
 	}
 
 	deleteAnimation = false
+}
+
+func showGameOverAnimation() {
+	for y := boardHeight - 1; y >= 0; y-- {
+		colorizeLine(y, termbox.ColorBlack)
+		termbox.Flush()
+		time.Sleep(50 * time.Millisecond)
+	}
 }
 
 func colorizeLine(line int, color termbox.Attribute) {

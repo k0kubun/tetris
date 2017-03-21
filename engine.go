@@ -1,14 +1,8 @@
 package main
 
-import (
-	"github.com/nsf/termbox-go"
-	"time"
-)
-
 const (
-	levelMax         = 20
-	scoreMax         = 999999
-	gameoverDuration = 50
+	levelMax = 20
+	scoreMax = 999999
 )
 
 type Engine struct {
@@ -24,7 +18,7 @@ func NewEngine() *Engine {
 
 func (engine *Engine) tick() {
 	board.ApplyGravity()
-	refreshScreen(nil)
+	refreshScreen()
 }
 
 func initGame() {
@@ -32,7 +26,7 @@ func initGame() {
 	engine.score = 0
 	engine.level = engine.initLevel
 	engine.deleteLines = 0
-	refreshScreen(nil)
+	refreshScreen()
 }
 
 func (engine *Engine) DeleteCheck() {
@@ -83,16 +77,7 @@ func (engine *Engine) AddScore(add int) {
 
 func gameOver() {
 	clock.over()
-
 	clock.lock = true
-	for j := 0; j < boardHeight; j++ {
-		refreshScreen(func() {
-			for y := boardHeight - 1; y > boardHeight-1-j; y -= 1 {
-				colorizeLine(y, termbox.ColorBlack)
-			}
-		})
-		timer := time.NewTimer(gameoverDuration * time.Millisecond)
-		<-timer.C
-	}
+	showGameOverAnimation()
 	clock.lock = false
 }
