@@ -8,32 +8,7 @@ import (
 )
 
 const (
-	background = `
-		WWWWWWWWWWWW WWWWWW
-		WkkkkkkkkkkW WkkkkW
-		WkkkkkkkkkkW WkkkkW
-		WkkkkkkkkkkW WkkkkW
-		WkkkkkkkkkkW WkkkkW
-		WkkkkkkkkkkW WWWWWW
-		WkkkkkkkkkkW
-		WkkkkkkkkkkW
-		WkkkkkkkkkkW BBBBBB
-		WkkkkkkkkkkW WWWWWW
-		WkkkkkkkkkkW
-		WkkkkkkkkkkW
-		WkkkkkkkkkkW BBBBBB
-		WkkkkkkkkkkW WWWWWW
-		WkkkkkkkkkkW
-		WkkkkkkkkkkW BBBBBB
-		WkkkkkkkkkkW WWWWWW
-		WkkkkkkkkkkW
-		WkkkkkkkkkkW
-		WWWWWWWWWWWW
-
-		kkkkkkkkkkkkkkkkkkk
-		WWWWWWWWWWWWWWWWWWW
-	`
-	nextMinoXOffset, nextMinoYOffset = 16, 2
+	nextMinoXOffset, nextMinoYOffset = 17, 2
 )
 
 var (
@@ -78,10 +53,11 @@ func (view *View) Stop() {
 func (view *View) RefreshScreen() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
-	view.drawBacks(background, 0, 0)
+	view.drawBackground()
+	view.drawTexts()
+
 	view.drawCells(board.text(), boardXOffset, boardYOffset)
 	view.drawNextMino()
-	view.drawTexts()
 
 	if !view.deleteAnimation {
 		view.drawDropMarker()
@@ -101,6 +77,44 @@ func (view *View) RefreshScreen() {
 	}
 
 	termbox.Flush()
+}
+
+func (view *View) drawBackground() {
+	colorBackgroundBorder := termbox.ColorWhite | termbox.AttrBold
+	colorBackgroundFill := termbox.ColorBlack
+
+	// playing board
+	xOffset := boardXOffset
+	yOffset := boardYOffset - 1
+	xEnd := boardXOffset + boardWidth*2 + 4
+	yEnd := boardYOffset + boardHeight + 1
+	for x := xOffset; x < xEnd; x++ {
+		for y := yOffset; y < yEnd; y++ {
+			if x == xOffset || x == xOffset+1 || x == xEnd-1 || x == xEnd-2 ||
+				y == yOffset || y == yEnd-1 {
+				termbox.SetCell(x, y, ' ', termbox.ColorDefault, colorBackgroundBorder)
+			} else {
+				termbox.SetCell(x, y, ' ', termbox.ColorDefault, colorBackgroundFill)
+			}
+		}
+	}
+
+	// piece preview
+	xOffset = boardXOffset + boardWidth*2 + 7
+	yOffset = boardYOffset - 1
+	xEnd = xOffset + minoWidth*2 + 6
+	yEnd = yOffset + minoHeight + 2
+	for x := xOffset; x < xEnd; x++ {
+		for y := yOffset; y < yEnd; y++ {
+			if x == xOffset || x == xOffset+1 || x == xEnd-1 || x == xEnd-2 ||
+				y == yOffset || y == yEnd-1 {
+				termbox.SetCell(x, y, ' ', termbox.ColorDefault, colorBackgroundBorder)
+			} else {
+				termbox.SetCell(x, y, ' ', termbox.ColorDefault, colorBackgroundFill)
+			}
+		}
+	}
+
 }
 
 func (view *View) drawTexts() {
