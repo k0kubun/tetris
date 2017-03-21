@@ -7,10 +7,6 @@ import (
 	"time"
 )
 
-const (
-	nextMinoXOffset, nextMinoYOffset = 17, 2
-)
-
 var (
 	colorMapping = map[rune]termbox.Attribute{
 		'k': termbox.ColorBlack,
@@ -55,25 +51,17 @@ func (view *View) RefreshScreen() {
 
 	view.drawBackground()
 	view.drawTexts()
-	view.drawBoard()
-	view.drawNextMino()
 
-	if !view.deleteAnimation {
-		view.drawDropMarker()
-	}
-	view.drawCurrentMino()
 	if clock.gameover {
-		for j := 0; j < boardHeight; j++ {
-			view.colorizeLine(j, termbox.ColorBlack)
-		}
-		view.drawText(10, 4, "GAME OVER", termbox.ColorWhite, termbox.ColorBlack)
-		view.drawText(7, 6, "<SPC> to continue", termbox.ColorWhite, termbox.ColorBlack)
-
-		ranking := NewRanking()
-		for idx, sc := range ranking.scores {
-			view.drawText(9, 8+idx, fmt.Sprintf("%2d: %6d", idx+1, sc), termbox.ColorWhite, termbox.ColorBlack)
+		view.drawGameOver()
+	} else {
+		view.drawBoard()
+		view.drawCurrentMino()
+		if !view.deleteAnimation {
+			view.drawDropMarker()
 		}
 	}
+	view.drawNextMino()
 
 	termbox.Flush()
 }
@@ -194,7 +182,7 @@ func (view *View) drawDropMarker() {
 }
 
 func (view *View) drawNextMino() {
-	view.drawMino(board.nextMino, nextMinoXOffset-board.nextMino.x, nextMinoYOffset-board.nextMino.y)
+	view.drawMino(board.nextMino, boardXOffset+boardWidth+4-board.nextMino.x, boardYOffset-board.nextMino.y)
 }
 
 func (view *View) drawCurrentMino() {
@@ -243,6 +231,21 @@ func (view *View) charByColor(color termbox.Attribute) rune {
 		}
 	}
 	return '.'
+}
+
+func (view *View) drawGameOver() {
+	xOffset := boardXOffset + 4
+	yOffset := boardYOffset + 2
+
+	view.drawText(xOffset, yOffset, "   GAME OVER", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset += 2
+	view.drawText(xOffset, yOffset, "sbar for new game", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset += 2
+	xOffset += 2
+	ranking := NewRanking()
+	for index, line := range ranking.scores {
+		view.drawText(xOffset, yOffset+index, fmt.Sprintf("%2d: %6d", index+1, line), termbox.ColorWhite, termbox.ColorBlack)
+	}
 }
 
 func (view *View) ShowDeleteAnimation(lines []int) {
