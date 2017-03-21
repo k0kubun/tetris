@@ -23,7 +23,7 @@ func ProcessEvent(event *termbox.Event) {
 		return
 	} else if engine.gameover {
 		if event.Key == termbox.KeySpace {
-			initGame()
+			engine.NewGame()
 			clock.start()
 		}
 		return

@@ -49,9 +49,8 @@ func main() {
 	}
 
 	clock = NewClock()
-
-	initGame()
 	clock.start()
+
 	waitKeyInput()
 
 	view.Stop()

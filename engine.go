@@ -22,11 +22,12 @@ func (engine *Engine) tick() {
 	view.RefreshScreen()
 }
 
-func initGame() {
+func (engine *Engine) NewGame() {
 	board = NewBoard()
 	engine.score = 0
 	engine.level = engine.initLevel
 	engine.deleteLines = 0
+	engine.gameover = false
 	view.RefreshScreen()
 }
 
@@ -34,6 +35,7 @@ func (engine *Engine) DeleteCheck() {
 	if !board.hasFullLine() {
 		return
 	}
+
 	clock.pause()
 
 	lines := board.fullLines()
@@ -52,12 +54,12 @@ func (engine *Engine) DeleteCheck() {
 	case 4:
 		engine.AddScore(1200 * (engine.level + 1))
 	}
-	levelUpdate()
+	engine.levelUpdate()
 
 	clock.start()
 }
 
-func levelUpdate() {
+func (engine *Engine) levelUpdate() {
 	if engine.level == levelMax {
 		return
 	}

@@ -14,8 +14,8 @@ type Clock struct {
 func NewClock() *Clock {
 	clock := &Clock{}
 	clock.paused = false
-	engine.gameover = false
 	clock.lock = false
+	engine.NewGame()
 	return clock
 }
 
