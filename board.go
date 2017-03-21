@@ -41,6 +41,15 @@ func (b *Board) deleteLine(y int) {
 	}
 }
 
+func (b *Board) hasFullLine() bool {
+	for j := 0; j < boardHeight; j++ {
+		if b.isFullLine(j) {
+			return true
+		}
+	}
+	return false
+}
+
 func (b *Board) fullLines() []int {
 	fullLines := []int{}
 	for j := 0; j < boardHeight; j++ {
@@ -49,15 +58,6 @@ func (b *Board) fullLines() []int {
 		}
 	}
 	return fullLines
-}
-
-func (b *Board) hasFullLine() bool {
-	for j := 0; j < boardHeight; j++ {
-		if b.isFullLine(j) {
-			return true
-		}
-	}
-	return false
 }
 
 func (b *Board) isFullLine(y int) bool {
@@ -71,14 +71,14 @@ func (b *Board) isFullLine(y int) bool {
 	return !hasBlank
 }
 
-func (b *Board) setCell(cell *Cell) {
-	b.colors[cell.x][cell.y] = cell.color
-}
-
 func (b *Board) setCells(cells []*Cell) {
 	for _, cell := range cells {
 		b.setCell(cell)
 	}
+}
+
+func (b *Board) setCell(cell *Cell) {
+	b.colors[cell.x][cell.y] = cell.color
 }
 
 func isOnBoard(x, y int) bool {
