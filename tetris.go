@@ -2,7 +2,9 @@ package main
 
 import (
 	"github.com/nsf/termbox-go"
+	"gopkg.in/inconshreveable/log15.v2"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -14,12 +16,19 @@ const (
 )
 
 var (
+	logger log15.Logger
 	engine *Engine
 	board  *Board
 	clock  *Clock
 )
 
 func main() {
+	baseDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	logger = log15.New()
+	if baseDir != "" {
+		logger.SetHandler(log15.Must.FileHandler(baseDir+"/tetris.log", log15.LogfmtFormat()))
+	}
+
 	err := termbox.Init()
 	if err != nil {
 		panic(err)

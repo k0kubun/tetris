@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/nsf/termbox-go"
+	"runtime"
 )
 
 func waitKeyInput() {
@@ -45,6 +46,11 @@ func ProcessEvent(event *termbox.Event) {
 			board.currentMino.moveLeft()
 		case termbox.KeyArrowRight:
 			board.currentMino.moveRight()
+		case termbox.KeyCtrlBackslash:
+			// ctrl \ to log stack trace
+			buffer := make([]byte, 1<<16)
+			length := runtime.Stack(buffer, true)
+			logger.Debug("Stack trace", "buffer", string(buffer[:length]))
 		}
 	} else {
 		switch event.Ch {
