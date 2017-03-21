@@ -84,18 +84,15 @@ func (b *Board) setCell(cell *Cell) {
 func (b *Board) addMino() {
 	engine.DeleteCheck()
 
-	b.currentMino = b.nextMino
-	if b.currentMino != nil {
-		b.currentMino.x = defaultMinoX
-		b.currentMino.y = defaultMinoY
-		if b.currentMino.conflicts() {
-			ranking := NewRanking()
-			ranking.insertScore(engine.score)
-			ranking.save()
-			gameOver()
-			return
-		}
+	b.nextMino.x = defaultMinoX
+	b.nextMino.y = defaultMinoY
+	if b.nextMino.conflicts() {
+		b.nextMino.x = 0
+		b.nextMino.y = 0
+		engine.gameOver()
+		return
 	}
+	b.currentMino = b.nextMino
 	b.nextMino = NewMino()
 }
 

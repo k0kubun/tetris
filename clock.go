@@ -5,17 +5,16 @@ import (
 )
 
 type Clock struct {
-	ticker   *time.Ticker
-	stop     chan bool
-	paused   bool
-	gameover bool
-	lock     bool
+	ticker *time.Ticker
+	stop   chan bool
+	paused bool
+	lock   bool
 }
 
 func NewClock() *Clock {
 	clock := &Clock{}
 	clock.paused = false
-	clock.gameover = false
+	engine.gameover = false
 	clock.lock = false
 	return clock
 }
@@ -38,7 +37,7 @@ func (c *Clock) start() {
 		}
 	}(c)
 	c.paused = false
-	c.gameover = false
+	engine.gameover = false
 }
 
 func (c *Clock) updateInterval() {
@@ -48,7 +47,6 @@ func (c *Clock) updateInterval() {
 
 func (c *Clock) over() {
 	c.ticker.Stop()
-	c.gameover = true
 	c.paused = true
 }
 

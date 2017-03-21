@@ -6,6 +6,7 @@ const (
 )
 
 type Engine struct {
+	gameover    bool
 	score       int
 	level       int
 	initLevel   int
@@ -75,9 +76,17 @@ func (engine *Engine) AddScore(add int) {
 	}
 }
 
-func gameOver() {
+func (engine *Engine) gameOver() {
 	clock.over()
 	clock.lock = true
+
 	view.ShowGameOverAnimation()
+
+	engine.gameover = true
+
+	ranking := NewRanking()
+	ranking.insertScore(engine.score)
+	ranking.save()
+
 	clock.lock = false
 }

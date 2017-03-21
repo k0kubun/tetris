@@ -29,7 +29,7 @@ var (
 )
 
 type View struct {
-	deleteAnimation bool
+	drawDropMarkerDisabled bool
 }
 
 func NewView() *View {
@@ -52,15 +52,14 @@ func (view *View) RefreshScreen() {
 	view.drawBackground()
 	view.drawTexts()
 
-	if clock.gameover {
+	if engine.gameover {
 		view.drawGameOver()
 	} else {
 		view.drawBoard()
 		view.drawCurrentMino()
-		if !view.deleteAnimation {
-			view.drawDropMarker()
-		}
+		view.drawDropMarker()
 	}
+
 	view.drawNextMino()
 
 	termbox.Flush()
@@ -162,6 +161,10 @@ func (view *View) drawBoard() {
 }
 
 func (view *View) drawDropMarker() {
+	if view.drawDropMarkerDisabled {
+		return
+	}
+
 	marker := *board.currentMino
 	for !marker.conflicts() {
 		marker.y++
@@ -240,7 +243,7 @@ func (view *View) drawGameOver() {
 }
 
 func (view *View) ShowDeleteAnimation(lines []int) {
-	view.deleteAnimation = true
+	view.drawDropMarkerDisabled = true
 
 	view.RefreshScreen()
 
@@ -255,15 +258,21 @@ func (view *View) ShowDeleteAnimation(lines []int) {
 		time.Sleep(160 * time.Millisecond)
 	}
 
-	view.deleteAnimation = false
+	view.drawDropMarkerDisabled = false
 }
 
 func (view *View) ShowGameOverAnimation() {
+	view.drawDropMarkerDisabled = true
+
+	view.RefreshScreen()
+
 	for y := boardHeight - 1; y >= 0; y-- {
 		view.colorizeLine(y, termbox.ColorBlack)
 		termbox.Flush()
 		time.Sleep(50 * time.Millisecond)
 	}
+
+	view.drawDropMarkerDisabled = false
 }
 
 func (view *View) colorizeLine(y int, color termbox.Attribute) {
