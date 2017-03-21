@@ -6,48 +6,36 @@ import (
 	"time"
 )
 
-const (
-	minoWidth, minoHeight      = 4, 4
-)
-
 var (
 	blocks = []string{
-		`
-			....
-			.GG.
-			GG..
-			....
-		`, `
-			....
-			.RR.
-			..RR
-			....
-		`, `
-			....
-			.YY.
-			.YY.
-			....
-		`, `
-			....
-			....
-			CCCC
-			....
-		`, `
-			....
-			.M..
-			MMM.
-			....
-		`, `
-			....
-			.b..
-			.bbb
-			....
-		`, `
-			....
-			..m.
-			mmm.
-			....
-		`,
+		`....
+.GG.
+GG..
+....`,
+		`....
+.RR.
+..RR
+....`,
+		`....
+.YY.
+.YY.
+....`,
+		`....
+....
+CCCC
+....`,
+		`....
+.M..
+MMM.
+....`,
+		`....
+.b..
+.bbb
+....`,
+		`....
+..m.
+mmm.
+....`,
 	}
 )
 
@@ -60,8 +48,6 @@ type Mino struct {
 func NewMino() *Mino {
 	rand.Seed(time.Now().UnixNano())
 	block := blocks[rand.Intn(len(blocks))]
-	block = strings.Replace(block, "\t", "", -1)
-	block = strings.Replace(block, " ", "", -1)
 	block = strings.Trim(block, "\n")
 	return &Mino{block: block}
 }
@@ -87,7 +73,7 @@ func (m *Mino) putBottom() int {
 	dstMino := *m
 	for !dstMino.conflicts() {
 		*m = dstMino
-		dstMino.forceMoveDown()
+		dstMino.y++
 		distance++
 	}
 	if distance < 0 {
@@ -98,18 +84,14 @@ func (m *Mino) putBottom() int {
 
 func (m *Mino) moveDown() {
 	dstMino := *m
-	dstMino.forceMoveDown()
+	dstMino.y++
 
 	if dstMino.conflicts() {
 		board.setCells(m.cells())
 		board.addMino()
 	} else {
-		m.forceMoveDown()
+		m.y++
 	}
-}
-
-func (m *Mino) forceMoveDown() {
-	m.y++
 }
 
 func (m *Mino) moveLeft() {
@@ -133,6 +115,13 @@ func (m *Mino) rotateRight() {
 	dstMino.forceRotateRight()
 	if !dstMino.conflicts() {
 		m.forceRotateRight()
+		return
+	}
+	// TODO: add bump for other wall
+	dstMino.x--
+	if !dstMino.conflicts() {
+		m.x--
+		m.forceRotateRight()
 	}
 }
 
@@ -149,6 +138,13 @@ func (m *Mino) rotateLeft() {
 	dstMino := *m
 	dstMino.forceRotateLeft()
 	if !dstMino.conflicts() {
+		m.forceRotateLeft()
+		return
+	}
+	// TODO: add bump for other wall
+	dstMino.x++
+	if !dstMino.conflicts() {
+		m.x++
 		m.forceRotateLeft()
 	}
 }

@@ -10,6 +10,8 @@ import (
 const (
 	boardWidth       = 10
 	boardHeight      = 18
+	minoWidth        = 4
+	minoHeight       = 4
 	levelMax         = 20
 	scoreMax         = 999999
 	gameoverDuration = 50
