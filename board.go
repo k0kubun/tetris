@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/k0kubun/termbox-go"
+	"github.com/nsf/termbox-go"
 	"time"
 )
 
