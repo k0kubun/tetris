@@ -6,16 +6,14 @@ import (
 
 type Clock struct {
 	ticker   *time.Ticker
-	callback func()
 	stop     chan bool
 	paused   bool
 	gameover bool
 	lock     bool
 }
 
-func NewClock(callback func()) *Clock {
+func NewClock() *Clock {
 	clock := &Clock{}
-	clock.callback = callback
 	clock.paused = false
 	clock.gameover = false
 	clock.lock = false
@@ -33,7 +31,7 @@ func (c *Clock) start() {
 		for {
 			select {
 			case <-c.ticker.C:
-				c.callback()
+				engine.tick()
 			case <-c.stop:
 				return
 			}

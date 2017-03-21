@@ -30,11 +30,7 @@ func main() {
 	termbox.Flush()
 
 	engine = NewEngine()
-
-	clock = NewClock(func() {
-		board.ApplyGravity()
-		refreshScreen()
-	})
+	clock = NewClock()
 
 	engine.initLevel = 1
 	if len(os.Args) > 1 {

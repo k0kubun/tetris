@@ -22,6 +22,11 @@ func NewEngine() *Engine {
 	return &Engine{}
 }
 
+func (engine *Engine) tick() {
+	board.ApplyGravity()
+	refreshScreen()
+}
+
 func initGame() {
 	board = NewBoard()
 	engine.score = 0
