@@ -224,15 +224,6 @@ func (view *View) drawCell(x, y int, color termbox.Attribute) {
 	}
 }
 
-func (view *View) charByColor(color termbox.Attribute) rune {
-	for ch, currentColor := range colorMapping {
-		if currentColor == color {
-			return ch
-		}
-	}
-	return '.'
-}
-
 func (view *View) drawGameOver() {
 	xOffset := boardXOffset + 4
 	yOffset := boardYOffset + 2

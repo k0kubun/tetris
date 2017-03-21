@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/nsf/termbox-go"
 )
 
@@ -106,15 +105,4 @@ func (b *Board) ApplyGravity() {
 
 func isOnBoard(x, y int) bool {
 	return (0 <= x && x < boardWidth) && (0 <= y && y < boardHeight)
-}
-
-func (b *Board) text() string {
-	text := ""
-	for j := 0; j < boardHeight; j++ {
-		for i := 0; i < boardWidth; i++ {
-			text = fmt.Sprintf("%s%c", text, view.charByColor(b.colors[i][j]))
-		}
-		text = fmt.Sprintf("%s\n", text)
-	}
-	return text
 }
