@@ -2,7 +2,6 @@ package main
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -21,14 +20,14 @@ func NewRanking() *Ranking {
 	if fileExists(configFilePath()) {
 		buf, err := ioutil.ReadFile(configFilePath())
 		if err != nil {
-			log.Fatal(err)
+			logger.Error("NewRanking", "error", err.Error())
 		}
 
 		scoreTexts := strings.Split(string(buf), ",")
 		for idx, text := range scoreTexts {
 			num, err := strconv.Atoi(text)
 			if err != nil {
-				log.Fatal(err)
+				logger.Error("NewRanking", "error", err.Error())
 			}
 			ranking.scores[idx] = num
 		}
@@ -73,7 +72,7 @@ func fileExists(filename string) bool {
 func configFilePath() string {
 	usr, err := user.Current()
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("configFilePath", "error", err.Error())
 	}
 	return filepath.Join(usr.HomeDir, ".tetris")
 }

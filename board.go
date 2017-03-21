@@ -1,20 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"github.com/k0kubun/termbox-go"
-	"time"
+	"github.com/nsf/termbox-go"
 )
 
 const (
-	boardWidth        = 10
-	boardHeight       = 18
-	blankColor        = termbox.ColorBlack
-	animationDuration = 160
+	defaultMinoX = 3
+	defaultMinoY = -1
 )
 
 type Board struct {
-	colors [boardWidth][boardHeight]termbox.Attribute
+	colors      [boardWidth][boardHeight]termbox.Attribute
+	currentMino *Mino
+	nextMino    *Mino
 }
 
 func NewBoard() *Board {
@@ -24,6 +22,8 @@ func NewBoard() *Board {
 			board.colors[i][j] = blankColor
 		}
 	}
+	board.currentMino = NewMino()
+	board.nextMino = NewMino()
 	return board
 }
 
@@ -41,7 +41,16 @@ func (b *Board) deleteLine(y int) {
 	}
 }
 
-func (b *Board) fullLines() []int {
+func (b *Board) HasFullLine() bool {
+	for j := 0; j < boardHeight; j++ {
+		if b.isFullLine(j) {
+			return true
+		}
+	}
+	return false
+}
+
+func (b *Board) FullLines() []int {
 	fullLines := []int{}
 	for j := 0; j < boardHeight; j++ {
 		if b.isFullLine(j) {
@@ -51,67 +60,110 @@ func (b *Board) fullLines() []int {
 	return fullLines
 }
 
-func (b *Board) showDeleteAnimation(lines []int) {
-	for times := 0; times < 3; times++ {
-		rewriteScreen(func() {
-			for _, line := range lines {
-				b.colorizeLine(line, termbox.ColorCyan)
-			}
-		})
-		timer := time.NewTimer(animationDuration * time.Millisecond)
-		<-timer.C
-
-		rewriteScreen(func() {})
-		timer = time.NewTimer(animationDuration * time.Millisecond)
-		<-timer.C
-	}
-}
-
-func (b *Board) colorizeLine(line int, color termbox.Attribute) {
-	for i := 0; i < boardWidth; i++ {
-		drawBack(i+boardXOffset, line+boardYOffset, color)
-	}
-}
-
 func (b *Board) isFullLine(y int) bool {
-	hasBlank := false
 	for i := 0; i < boardWidth; i++ {
 		if b.colors[i][y] == blankColor {
-			hasBlank = true
-			break
+			return false
 		}
 	}
-	return !hasBlank
+	return true
 }
 
-func (b *Board) hasFullLine() bool {
+func (b *Board) FullLinesWithMino(mino *Mino) []int {
+	fullLines := []int{}
 	for j := 0; j < boardHeight; j++ {
-		if b.isFullLine(j) {
-			return true
+		if b.isFullLineWithMino(j, mino) {
+			fullLines = append(fullLines, j)
 		}
 	}
-	return false
+	return fullLines
 }
 
-func (b *Board) text() string {
-	text := ""
+func (b *Board) isFullLineWithMino(y int, mino *Mino) bool {
+	for i := 0; i < boardWidth; i++ {
+		if b.colors[i][y] == blankColor {
+			if !mino.isInLocation(i, y) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (b *Board) HolesChangedWithMino(mino *Mino) int {
+	currentHoles := 0
+	newHoles := 0
+	startY := boardHeight
+
+	for i := 0; i < boardWidth; i++ {
+		startY = boardHeight
+		for j := 0; j < boardHeight; j++ {
+			if b.colors[i][j] != blankColor {
+				startY = j + 1
+				break
+			}
+		}
+		for j := startY; j < boardHeight; j++ {
+			if b.colors[i][j] == blankColor {
+				currentHoles++
+			}
+		}
+	}
+
+	for i := 0; i < boardWidth; i++ {
+		startY = boardHeight
+		for j := 0; j < boardHeight; j++ {
+			if b.colors[i][j] != blankColor || mino.isInLocation(i, j) {
+				startY = j + 1
+				break
+			}
+		}
+		for j := startY; j < boardHeight; j++ {
+			if b.colors[i][j] == blankColor && !mino.isInLocation(i, j) {
+				newHoles++
+			}
+		}
+	}
+
+	return newHoles - currentHoles
+}
+
+func (b *Board) HighestBlock() int {
 	for j := 0; j < boardHeight; j++ {
 		for i := 0; i < boardWidth; i++ {
-			text = fmt.Sprintf("%s%c", text, charByColor(b.colors[i][j]))
+			if b.colors[i][j] != blankColor {
+				return j
+			}
 		}
-		text = fmt.Sprintf("%s\n", text)
 	}
-	return text
-}
-
-func (b *Board) setCell(cell *Cell) {
-	b.colors[cell.x][cell.y] = cell.color
+	return boardHeight
 }
 
 func (b *Board) setCells(cells []*Cell) {
 	for _, cell := range cells {
 		b.setCell(cell)
 	}
+}
+
+func (b *Board) setCell(cell *Cell) {
+	b.colors[cell.x][cell.y] = cell.color
+}
+
+func (b *Board) addMino() {
+	engine.DeleteCheck()
+
+	b.currentMino = b.nextMino
+	b.currentMino.x = defaultMinoX
+	b.currentMino.y = defaultMinoY
+	if b.currentMino.conflicts() {
+		engine.gameOver()
+		return
+	}
+	b.nextMino = NewMino()
+}
+
+func (b *Board) ApplyGravity() {
+	board.currentMino.moveDown()
 }
 
 func isOnBoard(x, y int) bool {
