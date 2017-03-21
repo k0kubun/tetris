@@ -89,7 +89,7 @@ func (b *Board) addMino() {
 	if b.nextMino.conflicts() {
 		b.nextMino.x = 0
 		b.nextMino.y = 0
-		engine.gameOver()
+		engine.GameOver()
 		return
 	}
 	b.currentMino = b.nextMino

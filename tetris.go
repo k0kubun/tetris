@@ -49,7 +49,6 @@ func main() {
 	}
 
 	clock = NewClock()
-	clock.start()
 
 	waitKeyInput()
 

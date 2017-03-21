@@ -6,6 +6,8 @@ import (
 )
 
 func waitKeyInput() {
+	view.RefreshScreen()
+
 	for {
 		event := termbox.PollEvent()
 		if event.Type == termbox.EventKey {
@@ -24,12 +26,11 @@ func ProcessEvent(event *termbox.Event) {
 	} else if engine.gameover {
 		if event.Key == termbox.KeySpace {
 			engine.NewGame()
-			clock.start()
 		}
 		return
-	} else if clock.paused {
+	} else if engine.paused {
 		if event.Ch == 'p' {
-			clock.start()
+			engine.UnPause()
 		}
 		return
 	}
@@ -55,7 +56,7 @@ func ProcessEvent(event *termbox.Event) {
 	} else {
 		switch event.Ch {
 		case 'p':
-			clock.pause()
+			engine.Pause()
 		case 'z':
 			board.currentMino.rotateLeft()
 		case 'x':

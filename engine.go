@@ -1,11 +1,17 @@
 package main
 
+import (
+	"time"
+)
+
 const (
 	levelMax = 20
 	scoreMax = 999999
 )
 
 type Engine struct {
+	ticker      *time.Ticker
+	paused      bool
 	gameover    bool
 	score       int
 	level       int
@@ -14,12 +20,29 @@ type Engine struct {
 }
 
 func NewEngine() *Engine {
-	return &Engine{}
+	engine := &Engine{
+		gameover: true,
+	}
+	engine.ticker = time.NewTicker(time.Hour)
+	engine.ticker.Stop()
+	board = NewBoard()
+	return engine
 }
 
-func (engine *Engine) tick() {
-	board.ApplyGravity()
-	view.RefreshScreen()
+func (engine *Engine) Pause() {
+	engine.ticker.Stop()
+	engine.paused = true
+}
+
+func (engine *Engine) UnPause() {
+	engine.setTickDuration()
+	engine.paused = false
+	clock.start()
+}
+
+func (engine *Engine) setTickDuration() {
+	engine.ticker.Stop()
+	engine.ticker = time.NewTicker(time.Duration(10*(50-2*engine.level)) * time.Millisecond)
 }
 
 func (engine *Engine) NewGame() {
@@ -29,6 +52,12 @@ func (engine *Engine) NewGame() {
 	engine.deleteLines = 0
 	engine.gameover = false
 	view.RefreshScreen()
+	engine.UnPause()
+}
+
+func (engine *Engine) tick() {
+	board.ApplyGravity()
+	view.RefreshScreen()
 }
 
 func (engine *Engine) DeleteCheck() {
@@ -36,7 +65,7 @@ func (engine *Engine) DeleteCheck() {
 		return
 	}
 
-	clock.pause()
+	engine.Pause()
 
 	lines := board.fullLines()
 	view.ShowDeleteAnimation(lines)
@@ -44,6 +73,7 @@ func (engine *Engine) DeleteCheck() {
 		board.deleteLine(line)
 	}
 	engine.deleteLines += len(lines)
+
 	switch len(lines) {
 	case 1:
 		engine.AddScore(40 * (engine.level + 1))
@@ -54,21 +84,14 @@ func (engine *Engine) DeleteCheck() {
 	case 4:
 		engine.AddScore(1200 * (engine.level + 1))
 	}
-	engine.levelUpdate()
 
-	clock.start()
-}
-
-func (engine *Engine) levelUpdate() {
-	if engine.level == levelMax {
-		return
+	if engine.level < engine.deleteLines/10 {
+		engine.LevelUp()
 	}
 
-	targetLevel := engine.deleteLines / 10
-	if engine.level < targetLevel {
-		engine.level = targetLevel
-		clock.updateInterval()
-	}
+	view.RefreshScreen()
+
+	engine.UnPause()
 }
 
 func (engine *Engine) AddScore(add int) {
@@ -78,8 +101,16 @@ func (engine *Engine) AddScore(add int) {
 	}
 }
 
-func (engine *Engine) gameOver() {
-	clock.over()
+func (engine *Engine) LevelUp() {
+	if engine.level >= levelMax {
+		return
+	}
+	engine.level++
+	engine.setTickDuration()
+}
+
+func (engine *Engine) GameOver() {
+	engine.Pause()
 	clock.lock = true
 
 	view.ShowGameOverAnimation()
