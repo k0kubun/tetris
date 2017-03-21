@@ -112,7 +112,7 @@ func (b *Board) text() string {
 	text := ""
 	for j := 0; j < boardHeight; j++ {
 		for i := 0; i < boardWidth; i++ {
-			text = fmt.Sprintf("%s%c", text, charByColor(b.colors[i][j]))
+			text = fmt.Sprintf("%s%c", text, view.charByColor(b.colors[i][j]))
 		}
 		text = fmt.Sprintf("%s\n", text)
 	}

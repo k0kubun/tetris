@@ -78,103 +78,103 @@ func (view *View) Stop() {
 func (view *View) RefreshScreen() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
-	drawBacks(background, 0, 0)
-	drawCells(board.text(), boardXOffset, boardYOffset)
-	drawNextMino()
-	drawTexts()
+	view.drawBacks(background, 0, 0)
+	view.drawCells(board.text(), boardXOffset, boardYOffset)
+	view.drawNextMino()
+	view.drawTexts()
 
 	if !view.deleteAnimation {
-		drawDropMarker()
+		view.drawDropMarker()
 	}
-	drawCurrentMino()
+	view.drawCurrentMino()
 	if clock.gameover {
 		for j := 0; j < boardHeight; j++ {
 			view.colorizeLine(j, termbox.ColorBlack)
 		}
-		drawText(10, 4, "GAME OVER", termbox.ColorWhite, termbox.ColorBlack)
-		drawText(7, 6, "<SPC> to continue", termbox.ColorWhite, termbox.ColorBlack)
+		view.drawText(10, 4, "GAME OVER", termbox.ColorWhite, termbox.ColorBlack)
+		view.drawText(7, 6, "<SPC> to continue", termbox.ColorWhite, termbox.ColorBlack)
 
 		ranking := NewRanking()
 		for idx, sc := range ranking.scores {
-			drawText(9, 8+idx, fmt.Sprintf("%2d: %6d", idx+1, sc), termbox.ColorWhite, termbox.ColorBlack)
+			view.drawText(9, 8+idx, fmt.Sprintf("%2d: %6d", idx+1, sc), termbox.ColorWhite, termbox.ColorBlack)
 		}
 	}
 
 	termbox.Flush()
 }
 
-func drawTexts() {
-	drawText(32, 9, "SCORE", termbox.ColorWhite, termbox.ColorBlue)
-	drawText(32, 10, fmt.Sprintf("%7d", engine.score), termbox.ColorBlack, termbox.ColorWhite)
+func (view *View) drawTexts() {
+	view.drawText(32, 9, "SCORE", termbox.ColorWhite, termbox.ColorBlue)
+	view.drawText(32, 10, fmt.Sprintf("%7d", engine.score), termbox.ColorBlack, termbox.ColorWhite)
 
-	drawText(32, 13, "LEVEL", termbox.ColorWhite, termbox.ColorBlue)
-	drawText(32, 14, fmt.Sprintf("%5d", engine.level), termbox.ColorBlack, termbox.ColorWhite)
+	view.drawText(32, 13, "LEVEL", termbox.ColorWhite, termbox.ColorBlue)
+	view.drawText(32, 14, fmt.Sprintf("%5d", engine.level), termbox.ColorBlack, termbox.ColorWhite)
 
-	drawText(32, 16, "LINES", termbox.ColorWhite, termbox.ColorBlue)
-	drawText(32, 17, fmt.Sprintf("%5d", engine.deleteLines), termbox.ColorBlack, termbox.ColorWhite)
+	view.drawText(32, 16, "LINES", termbox.ColorWhite, termbox.ColorBlue)
+	view.drawText(32, 17, fmt.Sprintf("%5d", engine.deleteLines), termbox.ColorBlack, termbox.ColorWhite)
 
-	drawText(3, 22, "  ←     z     <SPC>    x,↑   →", termbox.ColorWhite, termbox.ColorBlack)
-	drawText(3, 23, " left     ↺   drop      ↻  right", termbox.ColorBlack, termbox.ColorWhite)
+	view.drawText(3, 22, "  ←     z     <SPC>    x,↑   →", termbox.ColorWhite, termbox.ColorBlack)
+	view.drawText(3, 23, " left     ↺   drop      ↻  right", termbox.ColorBlack, termbox.ColorWhite)
 
-	drawText(30, 19, " p: pause", termbox.ColorWhite, termbox.ColorDefault)
-	drawText(30, 20, " q: quit", termbox.ColorWhite, termbox.ColorDefault)
+	view.drawText(30, 19, " p: pause", termbox.ColorWhite, termbox.ColorDefault)
+	view.drawText(30, 20, " q: quit", termbox.ColorWhite, termbox.ColorDefault)
 }
 
-func drawText(x, y int, text string, fg, bg termbox.Attribute) {
+func (view *View) drawText(x, y int, text string, fg, bg termbox.Attribute) {
 	for index, ch := range text {
 		termbox.SetCell(x+index, y, rune(ch), fg, bg)
 	}
 }
 
-func drawCurrentMino() {
-	drawMino(board.currentMino, boardXOffset, boardYOffset)
+func (view *View) drawCurrentMino() {
+	view.drawMino(board.currentMino, boardXOffset, boardYOffset)
 }
 
-func drawDropMarker() {
+func (view *View) drawDropMarker() {
 	marker := *board.currentMino
 	marker.putBottom()
 
 	lines := strings.Split(marker.block, "\n")
 	for y, line := range lines {
 		for x, char := range line {
-			if isOnBoard(x+marker.x, y+marker.y) && colorByChar(char) != blankColor &&
-				colorByChar(char) != termbox.ColorDefault {
-				drawCell(x+marker.x+boardXOffset, y+marker.y+boardYOffset, colorByChar('K'))
+			if isOnBoard(x+marker.x, y+marker.y) && view.colorByChar(char) != blankColor &&
+				view.colorByChar(char) != termbox.ColorDefault {
+				view.drawCell(x+marker.x+boardXOffset, y+marker.y+boardYOffset, view.colorByChar('K'))
 			}
 		}
 	}
 }
 
-func drawNextMino() {
-	drawMino(board.nextMino, nextMinoXOffset-board.nextMino.x, nextMinoYOffset-board.nextMino.y)
+func (view *View) drawNextMino() {
+	view.drawMino(board.nextMino, nextMinoXOffset-board.nextMino.x, nextMinoYOffset-board.nextMino.y)
 }
 
-func drawMino(mino *Mino, xOffset, yOffset int) {
+func (view *View) drawMino(mino *Mino, xOffset, yOffset int) {
 	lines := strings.Split(mino.block, "\n")
 
 	for y, line := range lines {
 		for x, char := range line {
 			if isOnBoard(x+mino.x, y+mino.y) {
-				color := colorByChar(char)
-				drawCell(x+mino.x+xOffset, y+mino.y+yOffset, color)
+				color := view.colorByChar(char)
+				view.drawCell(x+mino.x+xOffset, y+mino.y+yOffset, color)
 			}
 		}
 	}
 }
 
-func drawCells(text string, left, top int) {
+func (view *View) drawCells(text string, left, top int) {
 	lines := strings.Split(text, "\n")
 
 	for y, line := range lines {
 		for x, char := range line {
-			drawCell(left+x, top+y, colorByChar(char))
+			view.drawCell(left+x, top+y, view.colorByChar(char))
 		}
 	}
 }
 
-func drawCell(x, y int, color termbox.Attribute) {
+func (view *View) drawCell(x, y int, color termbox.Attribute) {
 	if color != termbox.ColorDefault && color != blankColor {
-		if color == colorByChar('K') {
+		if color == view.colorByChar('K') {
 			termbox.SetCell(2*x-1, y, '▓', color, termbox.ColorWhite)
 			termbox.SetCell(2*x, y, ' ', color, termbox.ColorWhite)
 		} else {
@@ -184,26 +184,26 @@ func drawCell(x, y int, color termbox.Attribute) {
 	}
 }
 
-func drawBacks(text string, left, top int) {
+func (view *View) drawBacks(text string, left, top int) {
 	lines := strings.Split(text, "\n")
 
 	for y, line := range lines {
 		for x, char := range line {
-			drawBack(left+x, top+y, colorByChar(char))
+			view.drawBack(left+x, top+y, view.colorByChar(char))
 		}
 	}
 }
 
-func drawBack(x, y int, color termbox.Attribute) {
+func (view *View) drawBack(x, y int, color termbox.Attribute) {
 	termbox.SetCell(2*x-1, y, ' ', termbox.ColorDefault, color)
 	termbox.SetCell(2*x, y, ' ', termbox.ColorDefault, color)
 }
 
-func colorByChar(ch rune) termbox.Attribute {
+func (view *View) colorByChar(ch rune) termbox.Attribute {
 	return colorMapping[ch]
 }
 
-func charByColor(color termbox.Attribute) rune {
+func (view *View) charByColor(color termbox.Attribute) rune {
 	for ch, currentColor := range colorMapping {
 		if currentColor == color {
 			return ch
@@ -241,6 +241,6 @@ func (view *View) ShowGameOverAnimation() {
 
 func (view *View) colorizeLine(line int, color termbox.Attribute) {
 	for i := 0; i < boardWidth; i++ {
-		drawBack(i+boardXOffset, line+boardYOffset, color)
+		view.drawBack(i+boardXOffset, line+boardYOffset, color)
 	}
 }
