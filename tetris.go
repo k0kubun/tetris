@@ -20,29 +20,22 @@ const (
 
 var (
 	logger log15.Logger
+	view   *View
 	engine *Engine
 	board  *Board
 	clock  *Clock
 )
 
 func main() {
+
 	baseDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	logger = log15.New()
 	if baseDir != "" {
 		logger.SetHandler(log15.Must.FileHandler(baseDir+"/tetris.log", log15.LogfmtFormat()))
 	}
 
-	err := termbox.Init()
-	if err != nil {
-		panic(err)
-	}
-	defer termbox.Close()
-
-	termbox.SetInputMode(termbox.InputEsc)
-	termbox.Flush()
-
+	view = NewView()
 	engine = NewEngine()
-	clock = NewClock()
 
 	engine.initLevel = 1
 	if len(os.Args) > 1 {
@@ -54,7 +47,13 @@ func main() {
 			engine.initLevel = num
 		}
 	}
+
+	clock = NewClock()
+
 	initGame()
 	clock.start()
 	waitKeyInput()
+
+	view.Stop()
+
 }

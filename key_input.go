@@ -63,5 +63,5 @@ func ProcessEvent(event *termbox.Event) {
 		}
 	}
 
-	refreshScreen()
+	view.RefreshScreen()
 }

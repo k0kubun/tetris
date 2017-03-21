@@ -18,7 +18,7 @@ func NewEngine() *Engine {
 
 func (engine *Engine) tick() {
 	board.ApplyGravity()
-	refreshScreen()
+	view.RefreshScreen()
 }
 
 func initGame() {
@@ -26,7 +26,7 @@ func initGame() {
 	engine.score = 0
 	engine.level = engine.initLevel
 	engine.deleteLines = 0
-	refreshScreen()
+	view.RefreshScreen()
 }
 
 func (engine *Engine) DeleteCheck() {

@@ -55,10 +55,27 @@ var (
 		'w': termbox.ColorWhite,
 		'W': termbox.ColorWhite | termbox.AttrBold,
 	}
-	deleteAnimation bool
 )
 
-func refreshScreen() {
+type View struct {
+	deleteAnimation bool
+}
+
+func NewView() *View {
+	err := termbox.Init()
+	if err != nil {
+		panic(err)
+	}
+	termbox.SetInputMode(termbox.InputEsc)
+	termbox.Flush()
+	return &View{}
+}
+
+func (view *View) Stop() {
+	termbox.Close()
+}
+
+func (view *View) RefreshScreen() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
 	drawBacks(background, 0, 0)
@@ -66,7 +83,7 @@ func refreshScreen() {
 	drawNextMino()
 	drawTexts()
 
-	if !deleteAnimation {
+	if !view.deleteAnimation {
 		drawDropMarker()
 	}
 	drawCurrentMino()
@@ -196,9 +213,9 @@ func charByColor(color termbox.Attribute) rune {
 }
 
 func showDeleteAnimation(lines []int) {
-	deleteAnimation = true
+	view.deleteAnimation = true
 
-	refreshScreen()
+	view.RefreshScreen()
 
 	for times := 0; times < 3; times++ {
 		for _, line := range lines {
@@ -207,11 +224,11 @@ func showDeleteAnimation(lines []int) {
 		termbox.Flush()
 		time.Sleep(160 * time.Millisecond)
 
-		refreshScreen()
+		view.RefreshScreen()
 		time.Sleep(160 * time.Millisecond)
 	}
 
-	deleteAnimation = false
+	view.deleteAnimation = false
 }
 
 func showGameOverAnimation() {
