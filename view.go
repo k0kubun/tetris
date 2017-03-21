@@ -223,21 +223,6 @@ func (view *View) drawCell(x, y int, color termbox.Attribute) {
 	}
 }
 
-func (view *View) drawBacks(text string, left, top int) {
-	lines := strings.Split(text, "\n")
-
-	for y, line := range lines {
-		for x, char := range line {
-			view.drawBack(left+x, top+y, view.colorByChar(char))
-		}
-	}
-}
-
-func (view *View) drawBack(x, y int, color termbox.Attribute) {
-	termbox.SetCell(2*x-1, y, ' ', termbox.ColorDefault, color)
-	termbox.SetCell(2*x, y, ' ', termbox.ColorDefault, color)
-}
-
 func (view *View) colorByChar(ch rune) termbox.Attribute {
 	return colorMapping[ch]
 }
@@ -278,8 +263,9 @@ func (view *View) ShowGameOverAnimation() {
 	}
 }
 
-func (view *View) colorizeLine(line int, color termbox.Attribute) {
-	for i := 0; i < boardWidth; i++ {
-		view.drawBack(i+boardXOffset, line+boardYOffset, color)
+func (view *View) colorizeLine(y int, color termbox.Attribute) {
+	for x := 0; x < boardWidth; x++ {
+		termbox.SetCell((x+boardXOffset)*2-1, y+boardYOffset, ' ', termbox.ColorDefault, color)
+		termbox.SetCell((x+boardXOffset)*2, y+boardYOffset, ' ', termbox.ColorDefault, color)
 	}
 }
