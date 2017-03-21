@@ -1,20 +1,20 @@
 package main
 
 import (
-	"fmt"
-	"github.com/k0kubun/termbox-go"
-	"time"
+	"github.com/nsf/termbox-go"
 )
 
 const (
-	boardWidth        = 10
-	boardHeight       = 18
-	blankColor        = termbox.ColorBlack
-	animationDuration = 160
+	nextMinoX    = boardWidth + 4 // the + 4 is for the board border
+	nextMinoY    = 0
+	currentMinoX = 3
+	currentMinoY = -1
 )
 
 type Board struct {
-	colors [boardWidth][boardHeight]termbox.Attribute
+	colors      [boardWidth][boardHeight]termbox.Attribute
+	currentMino *Mino
+	nextMino    *Mino
 }
 
 func NewBoard() *Board {
@@ -24,6 +24,12 @@ func NewBoard() *Board {
 			board.colors[i][j] = blankColor
 		}
 	}
+	board.nextMino = NewMino()
+	board.nextMino.x = nextMinoX
+	board.nextMino.y = nextMinoY
+	board.currentMino = NewMino()
+	board.currentMino.x = currentMinoX
+	board.currentMino.y = currentMinoY
 	return board
 }
 
@@ -41,6 +47,15 @@ func (b *Board) deleteLine(y int) {
 	}
 }
 
+func (b *Board) hasFullLine() bool {
+	for j := 0; j < boardHeight; j++ {
+		if b.isFullLine(j) {
+			return true
+		}
+	}
+	return false
+}
+
 func (b *Board) fullLines() []int {
 	fullLines := []int{}
 	for j := 0; j < boardHeight; j++ {
@@ -51,67 +66,44 @@ func (b *Board) fullLines() []int {
 	return fullLines
 }
 
-func (b *Board) showDeleteAnimation(lines []int) {
-	for times := 0; times < 3; times++ {
-		rewriteScreen(func() {
-			for _, line := range lines {
-				b.colorizeLine(line, termbox.ColorCyan)
-			}
-		})
-		timer := time.NewTimer(animationDuration * time.Millisecond)
-		<-timer.C
-
-		rewriteScreen(func() {})
-		timer = time.NewTimer(animationDuration * time.Millisecond)
-		<-timer.C
-	}
-}
-
-func (b *Board) colorizeLine(line int, color termbox.Attribute) {
-	for i := 0; i < boardWidth; i++ {
-		drawBack(i+boardXOffset, line+boardYOffset, color)
-	}
-}
-
 func (b *Board) isFullLine(y int) bool {
-	hasBlank := false
 	for i := 0; i < boardWidth; i++ {
 		if b.colors[i][y] == blankColor {
-			hasBlank = true
-			break
+			return false
 		}
 	}
-	return !hasBlank
-}
-
-func (b *Board) hasFullLine() bool {
-	for j := 0; j < boardHeight; j++ {
-		if b.isFullLine(j) {
-			return true
-		}
-	}
-	return false
-}
-
-func (b *Board) text() string {
-	text := ""
-	for j := 0; j < boardHeight; j++ {
-		for i := 0; i < boardWidth; i++ {
-			text = fmt.Sprintf("%s%c", text, charByColor(b.colors[i][j]))
-		}
-		text = fmt.Sprintf("%s\n", text)
-	}
-	return text
-}
-
-func (b *Board) setCell(cell *Cell) {
-	b.colors[cell.x][cell.y] = cell.color
+	return true
 }
 
 func (b *Board) setCells(cells []*Cell) {
 	for _, cell := range cells {
 		b.setCell(cell)
 	}
+}
+
+func (b *Board) setCell(cell *Cell) {
+	b.colors[cell.x][cell.y] = cell.color
+}
+
+func (b *Board) addMino() {
+	engine.DeleteCheck()
+
+	b.nextMino.x = currentMinoX
+	b.nextMino.y = currentMinoY
+	if b.nextMino.conflicts() {
+		b.nextMino.x = nextMinoX
+		b.nextMino.y = nextMinoY
+		engine.GameOver()
+		return
+	}
+	b.currentMino = b.nextMino
+	b.nextMino = NewMino()
+	b.nextMino.x = nextMinoX
+	b.nextMino.y = nextMinoY
+}
+
+func (b *Board) ApplyGravity() {
+	board.currentMino.moveDown()
 }
 
 func isOnBoard(x, y int) bool {

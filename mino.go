@@ -6,51 +6,45 @@ import (
 	"time"
 )
 
-const (
-	defaultMinoX, defaultMinoY = 3, -1
-	minoWidth, minoHeight      = 4, 4
-)
-
 var (
 	blocks = []string{
-		`
-			....
-			.GG.
-			GG..
-			....
-		`, `
-			....
-			.RR.
-			..RR
-			....
-		`, `
-			....
-			.YY.
-			.YY.
-			....
-		`, `
-			....
-			....
-			CCCC
-			....
-		`, `
-			....
-			.M..
-			MMM.
-			....
-		`, `
-			....
-			.b..
-			.bbb
-			....
-		`, `
-			....
-			..m.
-			mmm.
-			....
-		`,
+		`....
+.GG.
+GG..
+....`,
+		`....
+.RR.
+..RR
+....`,
+		`....
+.YY.
+.YY.
+....`,
+		`....
+....
+CCCC
+....`,
+		`....
+.M..
+MMM.
+....`,
+		`....
+.b..
+.bbb
+....`,
+		`....
+..m.
+mmm.
+....`,
 	}
+	bag      []int
+	bagIndex int
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+	bag = rand.Perm(7)
+}
 
 type Mino struct {
 	block string
@@ -59,11 +53,13 @@ type Mino struct {
 }
 
 func NewMino() *Mino {
-	rand.Seed(time.Now().UnixNano())
-	block := blocks[rand.Intn(len(blocks))]
-	block = strings.Replace(block, "\t", "", -1)
-	block = strings.Replace(block, " ", "", -1)
+	block := blocks[bag[bagIndex]]
 	block = strings.Trim(block, "\n")
+	bagIndex++
+	if bagIndex > 6 {
+		bagIndex = 0
+		bag = rand.Perm(7)
+	}
 	return &Mino{block: block}
 }
 
@@ -77,44 +73,32 @@ func (m *Mino) setCell(x, y int, cell rune) {
 	m.block = string(buf)
 }
 
-func (m *Mino) applyGravity() {
-	m.moveDown()
-}
-
 func (m *Mino) drop() {
-	addScore(m.putBottom())
-	board.setCells(m.cells())
-	pushMino()
-}
-
-func (m *Mino) putBottom() int {
-	distance := -1
+	distance := 0
 	dstMino := *m
+	dstMino.y++
 	for !dstMino.conflicts() {
-		*m = dstMino
-		dstMino.forceMoveDown()
 		distance++
+		dstMino.y++
 	}
-	if distance < 0 {
-		distance = 0
-	}
-	return distance
+
+	m.y += distance
+
+	engine.AddScore(distance)
+	board.setCells(m.cells())
+	board.addMino()
 }
 
 func (m *Mino) moveDown() {
 	dstMino := *m
-	dstMino.forceMoveDown()
+	dstMino.y++
 
 	if dstMino.conflicts() {
 		board.setCells(m.cells())
-		pushMino()
+		board.addMino()
 	} else {
-		m.forceMoveDown()
+		m.y++
 	}
-}
-
-func (m *Mino) forceMoveDown() {
-	m.y++
 }
 
 func (m *Mino) moveLeft() {
@@ -138,6 +122,13 @@ func (m *Mino) rotateRight() {
 	dstMino.forceRotateRight()
 	if !dstMino.conflicts() {
 		m.forceRotateRight()
+		return
+	}
+	// TODO: add bump for other wall
+	dstMino.x--
+	if !dstMino.conflicts() {
+		m.x--
+		m.forceRotateRight()
 	}
 }
 
@@ -154,6 +145,13 @@ func (m *Mino) rotateLeft() {
 	dstMino := *m
 	dstMino.forceRotateLeft()
 	if !dstMino.conflicts() {
+		m.forceRotateLeft()
+		return
+	}
+	// TODO: add bump for other wall
+	dstMino.x++
+	if !dstMino.conflicts() {
+		m.x++
 		m.forceRotateLeft()
 	}
 }
