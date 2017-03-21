@@ -138,6 +138,8 @@ func (view *View) drawTexts() {
 	view.drawText(xOffset, yOffset, "p    - pause", termbox.ColorWhite, termbox.ColorBlack)
 	yOffset++
 	view.drawText(xOffset, yOffset, "q    - quit", termbox.ColorWhite, termbox.ColorBlack)
+	yOffset++
+	view.drawText(xOffset, yOffset, "u    - level up", termbox.ColorWhite, termbox.ColorBlack)
 }
 
 func (view *View) drawText(x, y int, text string, fg, bg termbox.Attribute) {

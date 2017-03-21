@@ -5,7 +5,6 @@ import (
 	"gopkg.in/inconshreveable/log15.v2"
 	"os"
 	"path/filepath"
-	"strconv"
 )
 
 const (
@@ -37,19 +36,7 @@ func main() {
 	view = NewView()
 	engine = NewEngine()
 
-	engine.initLevel = 1
-	if len(os.Args) > 1 {
-		num, err := strconv.Atoi(os.Args[1])
-		if err != nil {
-			panic(err)
-		}
-		if 0 < num && num < 10 {
-			engine.initLevel = num
-		}
-	}
-
 	clock = NewClock()
-
 	waitKeyInput()
 
 	view.Stop()

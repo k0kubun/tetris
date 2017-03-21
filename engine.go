@@ -15,7 +15,6 @@ type Engine struct {
 	gameover    bool
 	score       int
 	level       int
-	initLevel   int
 	deleteLines int
 }
 
@@ -48,7 +47,7 @@ func (engine *Engine) setTickDuration() {
 func (engine *Engine) NewGame() {
 	board = NewBoard()
 	engine.score = 0
-	engine.level = engine.initLevel
+	engine.level = 1
 	engine.deleteLines = 0
 	engine.gameover = false
 	view.RefreshScreen()
@@ -106,7 +105,7 @@ func (engine *Engine) LevelUp() {
 		return
 	}
 	engine.level++
-	engine.setTickDuration()
+	engine.UnPause()
 }
 
 func (engine *Engine) GameOver() {

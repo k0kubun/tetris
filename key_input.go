@@ -21,14 +21,24 @@ func waitKeyInput() {
 
 func ProcessEvent(event *termbox.Event) {
 
+	if event.Key == termbox.KeyCtrlI {
+		// ctrl i to log stack trace
+		buffer := make([]byte, 1<<16)
+		length := runtime.Stack(buffer, true)
+		logger.Debug("Stack trace", "buffer", string(buffer[:length]))
+		return
+	}
+
 	if clock.lock {
 		return
-	} else if engine.gameover {
+	}
+	if engine.gameover {
 		if event.Key == termbox.KeySpace {
 			engine.NewGame()
 		}
 		return
-	} else if engine.paused {
+	}
+	if engine.paused {
 		if event.Ch == 'p' {
 			engine.UnPause()
 		}
@@ -47,11 +57,6 @@ func ProcessEvent(event *termbox.Event) {
 			board.currentMino.moveLeft()
 		case termbox.KeyArrowRight:
 			board.currentMino.moveRight()
-		case termbox.KeyCtrlBackslash:
-			// ctrl \ to log stack trace
-			buffer := make([]byte, 1<<16)
-			length := runtime.Stack(buffer, true)
-			logger.Debug("Stack trace", "buffer", string(buffer[:length]))
 		}
 	} else {
 		switch event.Ch {
@@ -61,6 +66,8 @@ func ProcessEvent(event *termbox.Event) {
 			board.currentMino.rotateLeft()
 		case 'x':
 			board.currentMino.rotateRight()
+		case 'u':
+			engine.LevelUp()
 		}
 	}
 
