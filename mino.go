@@ -37,7 +37,14 @@ MMM.
 mmm.
 ....`,
 	}
+	bag      []int
+	bagIndex int
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+	bag = rand.Perm(7)
+}
 
 type Mino struct {
 	block string
@@ -46,9 +53,13 @@ type Mino struct {
 }
 
 func NewMino() *Mino {
-	rand.Seed(time.Now().UnixNano())
-	block := blocks[rand.Intn(len(blocks))]
+	block := blocks[bag[bagIndex]]
 	block = strings.Trim(block, "\n")
+	bagIndex++
+	if bagIndex > 6 {
+		bagIndex = 0
+		bag = rand.Perm(7)
+	}
 	return &Mino{block: block}
 }
 
