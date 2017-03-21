@@ -74,23 +74,19 @@ func (m *Mino) setCell(x, y int, cell rune) {
 }
 
 func (m *Mino) drop() {
-	engine.AddScore(m.putBottom())
+	distance := 0
+	dstMino := *m
+	dstMino.y++
+	for !dstMino.conflicts() {
+		distance++
+		dstMino.y++
+	}
+
+	m.y += distance
+
+	engine.AddScore(distance)
 	board.setCells(m.cells())
 	board.addMino()
-}
-
-func (m *Mino) putBottom() int {
-	distance := -1
-	dstMino := *m
-	for !dstMino.conflicts() {
-		*m = dstMino
-		dstMino.y++
-		distance++
-	}
-	if distance < 0 {
-		distance = 0
-	}
-	return distance
 }
 
 func (m *Mino) moveDown() {
