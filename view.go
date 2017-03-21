@@ -55,6 +55,7 @@ var (
 		'w': termbox.ColorWhite,
 		'W': termbox.ColorWhite | termbox.AttrBold,
 	}
+	deleteAnimation bool
 )
 
 func refreshScreen(rewrite func()) {
@@ -67,7 +68,9 @@ func refreshScreen(rewrite func()) {
 	if rewrite != nil {
 		rewrite()
 	} else {
-		drawDropMarker()
+		if !deleteAnimation {
+			drawDropMarker()
+		}
 		drawCurrentMino()
 		if clock.gameover {
 			for j := 0; j < boardHeight; j++ {
@@ -196,19 +199,22 @@ func charByColor(color termbox.Attribute) rune {
 }
 
 func showDeleteAnimation(lines []int) {
-	for times := 0; times < 3; times++ {
-		refreshScreen(func() {
-			for _, line := range lines {
-				colorizeLine(line, termbox.ColorCyan)
-			}
-		})
-		timer := time.NewTimer(160 * time.Millisecond)
-		<-timer.C
+	deleteAnimation = true
 
-		refreshScreen(func() {})
-		timer = time.NewTimer(160 * time.Millisecond)
-		<-timer.C
+	refreshScreen(nil)
+
+	for times := 0; times < 3; times++ {
+		for _, line := range lines {
+			colorizeLine(line, termbox.ColorCyan)
+		}
+		termbox.Flush()
+		time.Sleep(160 * time.Millisecond)
+
+		refreshScreen(nil)
+		time.Sleep(160 * time.Millisecond)
 	}
+
+	deleteAnimation = false
 }
 
 func colorizeLine(line int, color termbox.Attribute) {
