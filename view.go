@@ -89,7 +89,7 @@ func (view *View) RefreshScreen() {
 	drawCurrentMino()
 	if clock.gameover {
 		for j := 0; j < boardHeight; j++ {
-			colorizeLine(j, termbox.ColorBlack)
+			view.colorizeLine(j, termbox.ColorBlack)
 		}
 		drawText(10, 4, "GAME OVER", termbox.ColorWhite, termbox.ColorBlack)
 		drawText(7, 6, "<SPC> to continue", termbox.ColorWhite, termbox.ColorBlack)
@@ -212,14 +212,14 @@ func charByColor(color termbox.Attribute) rune {
 	return '.'
 }
 
-func showDeleteAnimation(lines []int) {
+func (view *View) ShowDeleteAnimation(lines []int) {
 	view.deleteAnimation = true
 
 	view.RefreshScreen()
 
 	for times := 0; times < 3; times++ {
 		for _, line := range lines {
-			colorizeLine(line, termbox.ColorCyan)
+			view.colorizeLine(line, termbox.ColorCyan)
 		}
 		termbox.Flush()
 		time.Sleep(160 * time.Millisecond)
@@ -231,15 +231,15 @@ func showDeleteAnimation(lines []int) {
 	view.deleteAnimation = false
 }
 
-func showGameOverAnimation() {
+func (view *View) ShowGameOverAnimation() {
 	for y := boardHeight - 1; y >= 0; y-- {
-		colorizeLine(y, termbox.ColorBlack)
+		view.colorizeLine(y, termbox.ColorBlack)
 		termbox.Flush()
 		time.Sleep(50 * time.Millisecond)
 	}
 }
 
-func colorizeLine(line int, color termbox.Attribute) {
+func (view *View) colorizeLine(line int, color termbox.Attribute) {
 	for i := 0; i < boardWidth; i++ {
 		drawBack(i+boardXOffset, line+boardYOffset, color)
 	}

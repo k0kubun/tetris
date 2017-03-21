@@ -36,7 +36,7 @@ func (engine *Engine) DeleteCheck() {
 	clock.pause()
 
 	lines := board.fullLines()
-	showDeleteAnimation(lines)
+	view.ShowDeleteAnimation(lines)
 	for _, line := range lines {
 		board.deleteLine(line)
 	}
@@ -78,6 +78,6 @@ func (engine *Engine) AddScore(add int) {
 func gameOver() {
 	clock.over()
 	clock.lock = true
-	showGameOverAnimation()
+	view.ShowGameOverAnimation()
 	clock.lock = false
 }
