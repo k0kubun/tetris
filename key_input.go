@@ -33,20 +33,28 @@ func ProcessEvent(event *termbox.Event) {
 		return
 	}
 
-	if event.Ch == 'p' {
-		clock.pause()
-	} else if event.Ch == 'z' {
-		currentMino.rotateLeft()
-	} else if event.Ch == 'x' || event.Key == termbox.KeyArrowUp {
-		currentMino.rotateRight()
-	} else if event.Key == termbox.KeySpace {
-		currentMino.drop()
-	} else if event.Key == termbox.KeyArrowDown {
-		currentMino.moveDown()
-	} else if event.Key == termbox.KeyArrowLeft {
-		currentMino.moveLeft()
-	} else if event.Key == termbox.KeyArrowRight {
-		currentMino.moveRight()
+	if event.Ch == 0 {
+		switch event.Key {
+		case termbox.KeySpace:
+			currentMino.drop()
+		case termbox.KeyArrowUp:
+			currentMino.rotateRight()
+		case termbox.KeyArrowDown:
+			currentMino.moveDown()
+		case termbox.KeyArrowLeft:
+			currentMino.moveLeft()
+		case termbox.KeyArrowRight:
+			currentMino.moveRight()
+		}
+	} else {
+		switch event.Ch {
+		case 'p':
+			clock.pause()
+		case 'z':
+			currentMino.rotateLeft()
+		case 'x':
+			currentMino.rotateRight()
+		}
 	}
 
 	refreshScreen()
