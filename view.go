@@ -55,8 +55,7 @@ func (view *View) RefreshScreen() {
 
 	view.drawBackground()
 	view.drawTexts()
-
-	view.drawCells(board.text(), boardXOffset, boardYOffset)
+	view.drawBoard()
 	view.drawNextMino()
 
 	if !view.deleteAnimation {
@@ -160,8 +159,18 @@ func (view *View) drawText(x, y int, text string, fg, bg termbox.Attribute) {
 	}
 }
 
-func (view *View) drawCurrentMino() {
-	view.drawMino(board.currentMino, boardXOffset, boardYOffset)
+func (view *View) drawBoard() {
+	xOffset := boardXOffset + 2
+	yOffset := boardYOffset
+
+	for i := 0; i < boardWidth; i++ {
+		for j := 0; j < boardHeight; j++ {
+			if board.colors[i][j] != blankColor {
+				termbox.SetCell(2*i+xOffset, j+yOffset, '▓', board.colors[i][j], board.colors[i][j]^termbox.AttrBold)
+				termbox.SetCell(2*i+1+xOffset, j+yOffset, ' ', board.colors[i][j], board.colors[i][j]^termbox.AttrBold)
+			}
+		}
+	}
 }
 
 func (view *View) drawDropMarker() {
@@ -188,13 +197,17 @@ func (view *View) drawNextMino() {
 	view.drawMino(board.nextMino, nextMinoXOffset-board.nextMino.x, nextMinoYOffset-board.nextMino.y)
 }
 
+func (view *View) drawCurrentMino() {
+	view.drawMino(board.currentMino, boardXOffset, boardYOffset)
+}
+
 func (view *View) drawMino(mino *Mino, xOffset, yOffset int) {
 	lines := strings.Split(mino.block, "\n")
 
 	for y, line := range lines {
 		for x, char := range line {
 			if isOnBoard(x+mino.x, y+mino.y) {
-				color := view.colorByChar(char)
+				color := colorMapping[char]
 				view.drawCell(x+mino.x+xOffset, y+mino.y+yOffset, color)
 			}
 		}
@@ -206,14 +219,14 @@ func (view *View) drawCells(text string, left, top int) {
 
 	for y, line := range lines {
 		for x, char := range line {
-			view.drawCell(left+x, top+y, view.colorByChar(char))
+			view.drawCell(left+x, top+y, colorMapping[char])
 		}
 	}
 }
 
 func (view *View) drawCell(x, y int, color termbox.Attribute) {
 	if color != termbox.ColorDefault && color != blankColor {
-		if color == view.colorByChar('K') {
+		if color == colorMapping['K'] {
 			termbox.SetCell(2*x-1, y, '▓', color, termbox.ColorWhite)
 			termbox.SetCell(2*x, y, ' ', color, termbox.ColorWhite)
 		} else {
@@ -221,10 +234,6 @@ func (view *View) drawCell(x, y int, color termbox.Attribute) {
 			termbox.SetCell(2*x, y, ' ', color, color^termbox.AttrBold)
 		}
 	}
-}
-
-func (view *View) colorByChar(ch rune) termbox.Attribute {
-	return colorMapping[ch]
 }
 
 func (view *View) charByColor(color termbox.Attribute) rune {
@@ -242,8 +251,8 @@ func (view *View) ShowDeleteAnimation(lines []int) {
 	view.RefreshScreen()
 
 	for times := 0; times < 3; times++ {
-		for _, line := range lines {
-			view.colorizeLine(line, termbox.ColorCyan)
+		for _, y := range lines {
+			view.colorizeLine(y, termbox.ColorCyan)
 		}
 		termbox.Flush()
 		time.Sleep(160 * time.Millisecond)
