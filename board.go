@@ -61,14 +61,12 @@ func (b *Board) fullLines() []int {
 }
 
 func (b *Board) isFullLine(y int) bool {
-	hasBlank := false
 	for i := 0; i < boardWidth; i++ {
 		if b.colors[i][y] == blankColor {
-			hasBlank = true
-			break
+			return false
 		}
 	}
-	return !hasBlank
+	return true
 }
 
 func (b *Board) setCells(cells []*Cell) {
