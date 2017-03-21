@@ -9,10 +9,13 @@ import (
 )
 
 const (
-	boardWidth  = 10
-	boardHeight = 18
-	minoWidth   = 4
-	minoHeight  = 4
+	boardWidth   = 10
+	boardHeight  = 18
+	boardXOffset = 3
+	boardYOffset = 2
+	minoWidth    = 4
+	minoHeight   = 4
+	blankColor   = termbox.ColorBlack
 )
 
 var (

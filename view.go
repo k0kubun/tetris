@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/nsf/termbox-go"
 	"strings"
+	"time"
 )
 
 const (
@@ -32,7 +33,6 @@ const (
 		kkkkkkkkkkkkkkkkkkk
 		WWWWWWWWWWWWWWWWWWW
 	`
-	boardXOffset, boardYOffset       = 3, 2
 	nextMinoXOffset, nextMinoYOffset = 16, 2
 )
 
@@ -195,4 +195,26 @@ func charByColor(color termbox.Attribute) rune {
 		}
 	}
 	return '.'
+}
+
+func (b *Board) showDeleteAnimation(lines []int) {
+	for times := 0; times < 3; times++ {
+		rewriteScreen(func() {
+			for _, line := range lines {
+				b.colorizeLine(line, termbox.ColorCyan)
+			}
+		})
+		timer := time.NewTimer(160 * time.Millisecond)
+		<-timer.C
+
+		rewriteScreen(func() {})
+		timer = time.NewTimer(160 * time.Millisecond)
+		<-timer.C
+	}
+}
+
+func (b *Board) colorizeLine(line int, color termbox.Attribute) {
+	for i := 0; i < boardWidth; i++ {
+		drawBack(i+boardXOffset, line+boardYOffset, color)
+	}
 }
