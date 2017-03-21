@@ -1,149 +1,41 @@
 package main
 
 import (
-	"github.com/k0kubun/termbox-go"
+	"github.com/nsf/termbox-go"
+	"gopkg.in/inconshreveable/log15.v2"
 	"os"
-	"strconv"
-	"time"
+	"path/filepath"
 )
 
 const (
-	levelMax         = 20
-	scoreMax         = 999999
-	gameoverDuration = 50
+	boardWidth   = 10
+	boardHeight  = 20
+	boardXOffset = 2
+	boardYOffset = 2
+	minoWidth    = 4
+	minoHeight   = 4
+	blankColor   = termbox.ColorBlack
 )
 
 var (
-	board       *Board
-	clock       *Clock
-	currentMino *Mino
-	nextMino    *Mino
-	score       int
-	level       int
-	initLevel   int
-	deleteLines int
+	logger log15.Logger
+	view   *View
+	engine *Engine
+	board  *Board
 )
 
-func initGame() {
-	board = NewBoard()
-	initMino()
-	score = 0
-	level = initLevel
-	deleteLines = 0
-	refreshScreen()
-}
-
-func initMino() {
-	currentMino, nextMino = nil, nil
-	pushMino()
-	pushMino()
-}
-
-func deleteCheck() {
-	if !board.hasFullLine() {
-		return
-	}
-	clock.pause()
-
-	lines := board.fullLines()
-	board.showDeleteAnimation(lines)
-	for _, line := range lines {
-		board.deleteLine(line)
-	}
-	deleteLines += len(lines)
-	switch len(lines) {
-	case 1:
-		addScore(40 * (level + 1))
-	case 2:
-		addScore(100 * (level + 1))
-	case 3:
-		addScore(300 * (level + 1))
-	case 4:
-		addScore(1200 * (level + 1))
-	}
-	levelUpdate()
-
-	clock.start()
-}
-
-func levelUpdate() {
-	if level == levelMax {
-		return
-	}
-
-	targetLevel := deleteLines / 10
-	if level < targetLevel {
-		level = targetLevel
-		clock.updateInterval()
-	}
-}
-
-func addScore(add int) {
-	score += add
-	if score > scoreMax {
-		score = scoreMax
-	}
-}
-
-func pushMino() {
-	deleteCheck()
-
-	currentMino = nextMino
-	if currentMino != nil {
-		currentMino.x, currentMino.y = defaultMinoX, defaultMinoY
-		if currentMino.conflicts() {
-			ranking := NewRanking()
-			ranking.insertScore(score)
-			ranking.save()
-			gameOver()
-			return
-		}
-	}
-	nextMino = NewMino()
-}
-
-func gameOver() {
-	clock.over()
-
-	clock.lock = true
-	for j := 0; j < boardHeight; j++ {
-		rewriteScreen(func() {
-			for y := boardHeight - 1; y > boardHeight-1-j; y -= 1 {
-				board.colorizeLine(y, termbox.ColorBlack)
-			}
-		})
-		timer := time.NewTimer(gameoverDuration * time.Millisecond)
-		<-timer.C
-	}
-	clock.lock = false
-}
-
 func main() {
-	err := termbox.Init()
-	if err != nil {
-		panic(err)
+	baseDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	logger = log15.New()
+	if baseDir != "" {
+		logger.SetHandler(log15.Must.FileHandler(baseDir+"/tetris.log", log15.LogfmtFormat()))
 	}
-	defer termbox.Close()
 
-	termbox.SetInputMode(termbox.InputEsc)
-	termbox.Flush()
+	view = NewView()
+	engine = NewEngine()
 
-	clock = NewClock(func() {
-		currentMino.applyGravity()
-		refreshScreen()
-	})
+	engine.Run()
 
-	initLevel = 1
-	if len(os.Args) > 1 {
-		num, err := strconv.Atoi(os.Args[1])
-		if err != nil {
-			panic(err)
-		}
-		if 0 < num && num < 10 {
-			initLevel = num
-		}
-	}
-	initGame()
-	clock.start()
-	waitKeyInput()
+	view.Stop()
+
 }
