@@ -26,4 +26,5 @@ $ tetris
 SPACE: drop
     p: pause
     q: quit
+    r: reset
 ```

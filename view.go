@@ -104,6 +104,7 @@ func drawTexts() {
 
 	drawText(30, 19, " p: pause", termbox.ColorWhite, termbox.ColorDefault)
 	drawText(30, 20, " q: quit", termbox.ColorWhite, termbox.ColorDefault)
+	drawText(30, 21, " r: reset", termbox.ColorWhite, termbox.ColorDefault)
 }
 
 func drawText(x, y int, text string, fg, bg termbox.Attribute) {

@@ -28,6 +28,10 @@ func waitKeyInput() {
 
 				if ev.Ch == 'p' {
 					clock.pause()
+				} else if ev.Ch == 'r' {
+					gameOver()
+					initGame()
+					clock.start()
 				} else if ev.Ch == 'z' {
 					currentMino.rotateLeft()
 				} else if ev.Ch == 'x' || ev.Key == termbox.KeyArrowUp {
